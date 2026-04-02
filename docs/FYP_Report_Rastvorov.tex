@@ -439,6 +439,26 @@ The implemented ELA system spans backend processing, runtime orchestration, stor
   \caption{High-level architecture of the implemented ELA system}
 \end{figure}
 
+\section{Technology Stack}
+\begin{table}[H]
+  \centering
+  \caption{Representative technology stack of the current ELA implementation}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.6cm}X X}
+    \toprule
+    Layer & Main technologies & Role in the system \\
+    \midrule
+    Frontend & React, Vite, TypeScript, PWA packaging & learner-facing workflow, visualizer, file/project interaction \\
+    Desktop packaging path & Tauri & desktop-oriented delivery path alongside the web application \\
+    Runtime/API & Python runtime service, HTTP bridge & sentence-contract processing, media submission, job orchestration \\
+    Linguistic core & spaCy, deterministic skeleton builder, TAM rules & structural truth layer \\
+    Generated enrichment & controlled note-generation path, template transformation, optional T5-based rendering & user-facing pedagogical wording \\
+    Translation and speech & M2M100, Whisper, espeak-ng, ffmpeg-related media tools & translation, ASR, phonetics, subtitle/media processing \\
+    Storage & SQLite and PostgreSQL paths & local state, persisted analysis history, reproducibility \\
+    Deployment & Docker Compose, Nginx & service isolation and reproducible deployment boundaries \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \section{Backend Linguistic Pipeline}
 The core pipeline is implemented in Python under the \texttt{ela\_pipeline} package. The project README and module structure indicate a rules-first design with the following major stages:
 \begin{enumerate}
@@ -492,6 +512,20 @@ The runtime layer also reveals one of the current weaknesses of the project: the
 
 \section{Frontend}
 The frontend is implemented as a React/Vite progressive web application. It organizes the user experience around projects, files, analysis, vocabulary, configuration, and a linguistic visualizer. Compared with the earlier Kivy-centred prototype framing, this frontend reflects a move toward a more modern web-oriented delivery model and a clearer separation between presentation and processing.
+
+\section{PWA and End-to-End Workflow Evidence}
+The repository also contains a dedicated PWA integration-test guide intended for pre-deployment verification. That document is useful because it describes the system not as isolated modules but as an end-to-end learner workflow:
+\begin{enumerate}
+  \item open the application;
+  \item register service-worker readiness;
+  \item create a project;
+  \item upload a real media file;
+  \item open the analysis screen;
+  \item run the full pipeline from transcription through rendering;
+  \item verify the appearance of generated downloadable artifacts.
+\end{enumerate}
+
+This is important evidence for the thesis because it shows that the project explicitly tests real browser behavior and long-running media paths, not only narrow unit-level logic. It also reinforces a major theme of the implementation phase: the final system must be assessed as a workflow, not only as a set of isolated NLP functions.
 
 \section{Media Processing}
 The media path extends ELA beyond text. Audio and video flow through extraction, transcription, sentence preparation, optional translation, and artifact rendering. The runtime also includes subtitle generation and media export paths. This makes ELA a multimodal learning system rather than a text-only analysis tool.
@@ -661,6 +695,9 @@ Overall, the project evaluates well as a research-engineering system:
   \item it is deep enough to support concrete architectural and modelling discussion;
   \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening.
 \end{itemize}
+
+\section{End-to-End Integration Perspective}
+The PWA integration documentation provides one more useful perspective on evaluation. It identifies concrete failure classes that unit tests alone may miss: browser-side model availability, service-worker cache drift, ffmpeg-related rendering failures, missing proxy headers, and user-flow stalls during long-running media processing. For the thesis, this matters because it broadens the meaning of ``system validation.'' In ELA, validation is not only about linguistic correctness; it is also about whether a learner can move from upload to usable artifact through a stable interface path.
 
 \section{Objectives-to-Evidence View}
 \begin{table}[H]
