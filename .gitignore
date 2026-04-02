@@ -1,4 +1,5 @@
 .codex
+Temp/
 
 # LaTeX build artifacts
 *.aux
