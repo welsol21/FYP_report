@@ -325,6 +325,32 @@ Listing~\ref{lst:rleexample} presents a simplified example of a sentence-level R
 }
 \end{lstlisting}
 
+\section{What the Canonical Sample Shows}
+The repository's canonical sample contract makes several implementation decisions explicit. A sentence node is not just a container for text. It is a convergence point for structural, pedagogical, bilingual, and traceability layers:
+\begin{itemize}
+  \item sentence and phrase nodes can carry TAM values and pedagogical notes;
+  \item node-level translations and phonetic values are attached as first-class fields rather than external lookups;
+  \item \texttt{grammar\_classes}, \texttt{note\_blueprints}, and \texttt{note\_generator\_version} preserve the distinction between structural evidence and rendered learner-facing wording;
+  \item \texttt{source\_span}, \texttt{node\_id}, and \texttt{parent\_id} are intended to make every node referentially stable enough for UI selection, validation, and later editing.
+\end{itemize}
+
+\begin{table}[H]
+  \centering
+  \caption{Representative field groups in the canonical sample contract}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.6cm}X}
+    \toprule
+    Field group & Function in the system \\
+    \midrule
+    Core identity & \texttt{type}, \texttt{content}, \texttt{node\_id}, \texttt{parent\_id} \\
+    Structural alignment & \texttt{source\_span}, \texttt{grammatical\_role}, \texttt{dep\_label}, \texttt{head\_id} \\
+    Grammar interpretation & \texttt{tense}, \texttt{aspect}, \texttt{mood}, \texttt{voice}, \texttt{finiteness}, \texttt{tam\_construction} \\
+    Pedagogical layer & \texttt{linguistic\_notes}, \texttt{grammar\_classes}, \texttt{note\_blueprints} \\
+    Learner support & \texttt{translations}, \texttt{phonetic}, \texttt{synonyms}, \texttt{cefr\_level} \\
+    Traceability & \texttt{schema\_version}, \texttt{note\_generator\_version} and related quality fields \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \section{Why Hierarchical JSON}
 Hierarchical JSON was chosen over flatter annotation forms for several reasons:
 \begin{itemize}
@@ -443,6 +469,18 @@ The implemented system is not driven by a single end-to-end model. As a result, 
 \section{Source Families}
 The repository indicates several source families and dataset-building paths, including curated corpora, open linguistic resources, and derived educational examples. The codebase and documentation reference sources such as UD-style corpora, OANC, Gutenberg-derived material, MASC, and rulebook or handbook extraction pipelines.
 
+\section{Curation and Stabilization}
+The curator progress report presents the project as having reached a more stable baseline through five linked improvements:
+\begin{enumerate}
+  \item formalization of a v2-compatible contract;
+  \item cleaner phrase structure and stronger fallback-note behavior;
+  \item stricter validation modes and more reliable schema enforcement;
+  \item expanded test coverage;
+  \item synchronization of documentation with implemented behavior.
+\end{enumerate}
+
+Whether one accepts the phrase ``production-ready baseline'' in full or not, the report is useful because it captures the intended direction of the implementation phase: less noise, more traceability, and stronger safety around the contract itself.
+
 \section{Deduplication and Quality Control}
 A recurring theme in the project documentation is that raw volume is not enough. The system places substantial effort into:
 \begin{itemize}
@@ -455,6 +493,21 @@ A recurring theme in the project documentation is that raw volume is not enough.
 
 \section{Placeholder Construction}
 The note-generation path appears to depend critically on converting enriched linguistic structures into more abstract templates. This is the point where dataset engineering and the context--pattern duality meet: the abstraction strategy is not only a training trick, but part of how the project reframes the pedagogical signal.
+
+The canonical process document dated 2026-03-21 makes that transformation explicit. It defines a ten-step path from book-derived \texttt{notation + content} pairs to inference-time rendering:
+\begin{enumerate}
+  \item extract notation and paired content from source material;
+  \item build a contract tree from the content;
+  \item analyze the notation and convert it into placeholder-based template text;
+  \item constrain placeholders to attributes available in the paired contract;
+  \item train on templated notation rather than on fully rendered final notes;
+  \item at inference time, rebuild the contract for new content;
+  \item let the model output a notation template with allowed placeholders only;
+  \item fill those placeholders from the contract;
+  \item write the rendered note back into the tree.
+\end{enumerate}
+
+This is a stronger and more specific claim than ``the system uses placeholders.'' It shows that placeholders are intended to sit at the centre of the full data path from source extraction to runtime note realization.
 
 \section{From Free-Form T5 to Controlled Rendering}
 The project documentation shows a clear evolution away from unconstrained note generation. By March 2026, the preferred architecture was no longer ``raw text to T5 note.'' The intended flow had become:
@@ -494,6 +547,30 @@ The project contains substantial test infrastructure and multiple evaluation art
 \section{Classifier Path and Controlled Generation Evidence}
 One useful checkpoint in the repository is the phase-1 classifier execution report dated 2026-02-25. That report confirms an orchestrated training and quality-cycle run, classifier metadata generation, runtime sentence-contract validation, and controlled note rewriting behavior. At the same time, the same report also reveals a limitation that is academically important: the baseline freeze at that point still used a very small training set. This means the existence of the pipeline is strongly supported, while any broad performance claim should remain tied to the exact dataset version that produced it.
 
+\section{Concrete Tabular Evaluation Snapshot}
+Another useful artifact is the full-ladder tabular evaluation snapshot dated 2026-03-05. Unlike broad narrative claims, this file gives a concrete checkpoint with explicit split sizes and summary metrics:
+
+\begin{table}[H]
+  \centering
+  \caption{Selected values from the 2026-03-05 tabular joint-profile evaluation artifact}
+  \begin{tabular}{lr}
+    \toprule
+    Metric or count & Value \\
+    \midrule
+    Training rows & 8211 \\
+    Development rows & 1182 \\
+    Test rows & 1196 \\
+    Joint development accuracy & 0.9797 \\
+    Joint test accuracy & 0.9849 \\
+    Grammar development macro-F1 & 0.8088 \\
+    Grammar test macro-F1 & 0.8231 \\
+    Runtime smoke check & pass \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+This snapshot is useful for two reasons. First, it proves that at least one later evaluation stage moved far beyond the tiny baseline freeze described in the February phase-1 report. Second, it shows why metric claims must be attributed carefully: different documents in the repository reflect different phases, datasets, and evaluation scopes. For the thesis, the safest strategy is to treat metrics as checkpoint-specific rather than as timeless project constants.
+
 \section{What the Current Evidence Does Not Fully Support}
 At the same time, the current development state also places important limits on the thesis claims. The current \texttt{dev} branch is not fully green under the project's own unit-test suite. Targeted failures remain in:
 \begin{itemize}
@@ -522,6 +599,22 @@ Overall, the project evaluates well as a research-engineering system:
   \item it is deep enough to support concrete architectural and modelling discussion;
   \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening.
 \end{itemize}
+
+\section{Objectives-to-Evidence View}
+\begin{table}[H]
+  \centering
+  \caption{High-level objective-to-evidence mapping for the current thesis}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{2cm}X X}
+    \toprule
+    Objective & Intended outcome & Current evidence type \\
+    \midrule
+    O1 & Multimodal pipeline from text/audio/video to sentence-level analysis & runtime modules, integration-test guide, API/service code, unit tests \\
+    O2 & Stable hierarchical contract carrying structural and pedagogical metadata & sample contract, validator, schemas, curator report, contract-safe architecture docs \\
+    O3 & Learner-facing interface for exploration, export, and workflow control & React/Vite frontend, runtime API endpoints, visualizer-related commits and docs \\
+    O4 & Improved note-generation generalization through structural abstraction & template-process docs, template-expansion strategy, T5/placeholder narrative in project docs \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \chapter{Discussion, Limitations, and Future Work}
 \section{Discussion}
