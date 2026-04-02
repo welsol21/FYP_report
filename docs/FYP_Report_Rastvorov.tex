@@ -1,0 +1,581 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{url}
+
+\definecolor{mtunavy}{HTML}{1B2A4A}
+\definecolor{mtuamber}{HTML}{F5C518}
+\definecolor{codebg}{HTML}{F6F8FA}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=mtunavy,
+  citecolor=mtunavy,
+  urlcolor=mtunavy,
+  pdftitle={ELA: English Language Assistant},
+  pdfauthor={Vladyslav Rastvorov}
+}
+
+\lstdefinestyle{jsonstyle}{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{ELA: English Language Assistant}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\color{mtunavy}}
+  {\filleft\Huge\chaptername\ \thechapter}
+  {1ex}
+  {\titlerule\vspace{1ex}\filright\Huge}
+
+\setlist[itemize]{topsep=4pt,itemsep=3pt}
+\setlist[enumerate]{topsep=4pt,itemsep=3pt}
+\onehalfspacing
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.5cm}
+  {\color{mtunavy}\rule{\textwidth}{1.2pt}\par}
+  \vspace{0.6cm}
+  {\Huge\bfseries ELA: English Language Assistant\par}
+  \vspace{0.4cm}
+  {\Large Recursive Linguistic Elements, Multimodal Processing, and Explainable Support for Authentic English Input\par}
+  \vspace{0.8cm}
+  {\color{mtuamber}\rule{0.72\textwidth}{1.2pt}\par}
+  \vspace{1.1cm}
+
+  \includegraphics[width=0.22\textwidth]{../Figures/MTUCREST.jpg}\par
+  \vspace{1.1cm}
+
+  {\Large Vladyslav Rastvorov\par}
+  \vspace{0.2cm}
+  {\large R00274535\par}
+  \vspace{1.1cm}
+
+  {\large This thesis has been submitted in partial fulfillment for the degree of\par}
+  \vspace{0.2cm}
+  {\Large\bfseries Bachelor of Science (Honours) in Computer Systems\par}
+  \vspace{0.9cm}
+
+  {\large Faculty of Engineering and Science\par}
+  {\large Department of Computer Science\par}
+  {\large Munster Technological University Cork\par}
+  \vspace{1cm}
+
+  \begin{tabular}{>{\bfseries}p{4.2cm}p{8.5cm}}
+    Research Supervisor: & Dr. Alex Vakaloudis \\
+    Implementation Supervisor: & Prof. Nasir Ahmad \\
+    Academic Year: & 2024--2025 \\
+    Submission Date: & April 2026 \\
+  \end{tabular}
+
+  \vfill
+  {\color{mtunavy}\rule{\textwidth}{1.2pt}\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\chapter*{Declaration of Authorship}
+This report, \emph{ELA: English Language Assistant}, is submitted in partial fulfillment of the requirements for the degree of Bachelor of Science (Honours) in Computer Systems at Munster Technological University Cork. I, Vladyslav Rastvorov, declare that the work presented in this thesis is substantially my own except where explicitly stated.
+
+\begin{itemize}
+  \item This work was carried out wholly or mainly while in candidature for the above degree at Munster Technological University Cork.
+  \item Where any part of this thesis has previously been submitted for another qualification, this has been clearly stated.
+  \item Where I have consulted the published work of others, this is always clearly attributed.
+  \item Where I have quoted from the work of others, the source is always given.
+  \item I have acknowledged all main sources of help.
+  \item Where the thesis is based on work carried out jointly with others, I have made clear what was done by others and what I contributed myself.
+\end{itemize}
+
+\vspace{1.4cm}
+\noindent Signed:\ \rule{7cm}{0.4pt}
+
+\vspace{0.8cm}
+\noindent Date:\ \rule{4cm}{0.4pt}
+
+\chapter*{Abstract}
+This thesis presents the continued development of the English Language Assistant (ELA), a full-stack language learning system designed to make authentic English input more accessible without simplifying or rewriting the source material. ELA ingests text, audio, and video, then transforms the input into a hierarchical contract of \emph{Recursive Linguistic Elements} (RLE), where each sentence is represented as a structured tree of sentence, phrase, and word nodes enriched with grammatical, pedagogical, and bilingual metadata.
+
+The implemented system combines deterministic linguistic processing and machine learning in a rules-first architecture. spaCy-based parsing, a deterministic skeleton builder, and a rule-based tense-aspect-mood layer provide the structural truth layer. Additional enrichments include CEFR estimation, pedagogical note generation, translation, phonetic transcription, vocabulary export, and runtime persistence. A React/Vite progressive web application and a runtime service expose these results through an interactive visualizer and media-oriented workflow.
+
+Alongside the engineering contribution, the project examines a central modelling insight that emerged during note-generation experiments: performance improved substantially when raw lexical notation was replaced by structurally abstract placeholder templates. This observation is interpreted as a \emph{context--pattern duality}: during training, diverse contextual examples carve stable internal patterns; during inference, frozen patterns impose structure on unseen context. In this thesis, that idea is treated as an empirical observation and explanatory framework rather than a formal theorem.
+
+The final outcome is not only a prototype application but a validated architectural framework for explainable, AI-assisted language learning. At the same time, the thesis documents current limitations, including unresolved runtime and pipeline regressions, incomplete stabilization of some multimodal paths, and the gap between research claims and fully production-hardened behavior. The work therefore positions ELA as both a usable system and an ongoing research programme.
+
+\chapter*{Acknowledgements}
+I would like to thank my supervisors, Dr. Alex Vakaloudis and Prof. Nasir Ahmad, for their guidance across both the research and implementation dimensions of this project. I am also grateful to my family for their continuing support throughout the development of ELA, and to Munster Technological University Cork for providing the environment in which this work could take shape.
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter*{List of Abbreviations}
+\begin{longtable}{>{\bfseries}p{3cm}p{10cm}}
+ASR & Automatic Speech Recognition \\
+CALL & Computer-Assisted Language Learning \\
+CEFR & Common European Framework of Reference for Languages \\
+FR & Functional Requirement \\
+IPA & International Phonetic Alphabet \\
+LLM & Large Language Model \\
+ML & Machine Learning \\
+NFR & Non-Functional Requirement \\
+NLP & Natural Language Processing \\
+POS & Part of Speech \\
+PWA & Progressive Web Application \\
+RLE & Recursive Linguistic Elements \\
+TAM & Tense, Aspect, and Mood \\
+WER & Word Error Rate \\
+\end{longtable}
+
+\clearpage
+\pagenumbering{arabic}
+
+\chapter{Introduction}
+\section{Motivation}
+Most digital language-learning systems lower difficulty by reducing or simplifying the source material. This makes early progress easier, but it also distances the learner from real English as it appears in speech, media, and written communication. Authentic input is richer, more motivating, and more representative of actual language use, but it is also harder to process without support. The central motivation of ELA is therefore not to simplify authentic English, but to make it explainable.
+
+\section{Problem Statement}
+The problem addressed in this project is the lack of a transparent, learner-facing system that can process authentic English across text, audio, and video, preserve the original linguistic structure, and expose just enough grammatical and bilingual support to improve comprehension. Existing systems typically optimize for fluency drills, vocabulary repetition, or black-box assistance. ELA instead targets explainable decomposition of authentic input into interpretable linguistic units.
+
+\section{Research Questions}
+This thesis is guided by three research questions:
+\begin{enumerate}
+  \item How can a rules-first linguistic pipeline produce structured, pedagogically useful representations from authentic media without simplifying the original input?
+  \item What representation model best captures sentence, phrase, and word relationships while remaining stable enough for validation, persistence, and visualization?
+  \item To what extent can structural abstraction, particularly placeholder-based modelling, improve the generalization of generated pedagogical notes?
+\end{enumerate}
+
+\section{Objectives}
+The implementation phase of ELA is organized around the following objectives:
+\begin{enumerate}
+  \item Build a multimodal processing pipeline that ingests text, audio, and video and converts them into structured sentence-level representations.
+  \item Formalize a hierarchical contract that can carry grammatical, pedagogical, and bilingual metadata in a stable and validated form.
+  \item Deliver a learner-facing application that exposes linguistic structure through an interactive visualizer, export flow, and media-oriented workflow.
+  \item Investigate whether abstract structural templates support stronger note-generation generalization than raw lexical notation.
+\end{enumerate}
+
+\section{Contributions}
+The main contributions of this thesis are:
+\begin{itemize}
+  \item an evolved implementation of ELA as a full-stack system rather than a concept-level prototype;
+  \item the formalization and operationalization of the RLE contract as the core data interface between backend, storage, and frontend;
+  \item a rules-first linguistic pipeline integrating parsing, phrase construction, TAM enrichment, CEFR estimation, translation, phonetic support, and pedagogical notes;
+  \item a research interpretation of the placeholder strategy for note generation through the context--pattern duality;
+  \item a critical evaluation of the current system, including implemented capabilities, empirical evidence, and unresolved limitations.
+\end{itemize}
+
+\section{Thesis Structure}
+The remainder of this report is structured as follows. Chapter 2 reviews the background fields relevant to ELA. Chapter 3 positions the current work as a continuation of the earlier research thesis and explains the project evolution. Chapter 4 defines the RLE data model. Chapter 5 examines the context--pattern duality. Chapter 6 presents the implemented system architecture. Chapter 7 discusses dataset and corpus engineering. Chapter 8 evaluates the system. Chapter 9 discusses limitations and future work. Chapter 10 concludes the thesis.
+
+\chapter{Background and Related Work}
+\section{Computer-Assisted Language Learning}
+Computer-Assisted Language Learning (CALL) provides the pedagogical backdrop of ELA. Classical CALL systems focused on drills, exercises, and tightly constrained curricula. More recent systems incorporate adaptation, learner modelling, and richer multimodal interaction. However, even modern tools frequently rely on simplified input and opaque support mechanisms. ELA aligns instead with the strand of CALL that values learner autonomy, authentic materials, and graduated support.
+
+\section{Authentic Materials and Cognitive Support}
+Authentic materials are attractive because they preserve the linguistic richness of real communication. They also create a difficulty gap: the very features that make authentic input useful also make it cognitively demanding. ELA addresses this gap by layering support over the original text rather than rewriting it. This places the project at the intersection of authenticity, scaffolding, and transparency.
+
+\section{NLP Parsing and Structured Analysis}
+The system relies on modern NLP tooling to obtain syntactic and morphological signals, especially tokenization, dependency parsing, and part-of-speech tagging. These signals are not presented directly to the learner in raw form. Instead, they are transformed into a controlled representation that supports later enrichment and visualization.
+
+\section{Tense, Aspect, and Mood}
+Verb morphology is central to pedagogical explanation in ELA. Rather than relying on a black-box generator to infer tense-aspect-mood information, the implemented system uses a deterministic rules layer over parser output. This is a deliberately conservative engineering choice: it improves transparency, allows explicit quality checks, and constrains downstream note generation.
+
+\section{CEFR Estimation}
+The Common European Framework of Reference for Languages offers a useful scale for expressing difficulty and pedagogical level. In ELA, CEFR is used as an enrichment layer for sentence and node-level interpretation. The project includes multiple explored approaches, but the implemented system converges on a lighter-weight, feature-driven path for practical deployment.
+
+\section{Sequence-to-Sequence Models and T5}
+Sequence-to-sequence models are relevant because pedagogical note generation in ELA is not a pure classification problem. It requires controlled text generation from structured inputs. T5-style models are suitable for this kind of mapping, but the project evidence suggests that representation strategy matters as much as model choice. The strongest note-generation behavior did not come simply from applying a larger model, but from restructuring the training signal.
+
+\section{Automatic Speech Recognition and Translation}
+Authentic language learning is not restricted to text. ELA therefore extends to audio and video through ASR, subtitle generation, and translation enrichment. Whisper-based transcription and M2M100-based translation represent the local-first, model-based path in the system, while additional providers remain optional or comparative extensions.
+
+\section{Gap Analysis}
+The main gap targeted by ELA is the absence of a single learner-facing platform that takes authentic multimodal English input and converts it into a structured, hierarchical, explainable, and exportable pedagogical representation. Existing tools may offer translation, subtitles, grammar help, or media playback, but ELA's distinguishing aim is the combination of:
+\begin{itemize}
+  \item authentic media ingestion;
+  \item hierarchical structural representation;
+  \item explicit validation of the intermediate contract;
+  \item learner-facing visualization and export;
+  \item a research path toward abstraction-based pedagogical generation.
+\end{itemize}
+
+\chapter{Previous Research Foundation and Project Evolution}
+\section{Relationship to the Earlier Research Thesis}
+This thesis is not the first formal document produced around ELA. A previous research thesis established the conceptual foundations of the project: the rationale for explainability over simplification, the importance of authentic input, the Recursive Linguistic Elements idea, and the pedagogical role of an interactive visualizer. That earlier work was primarily concerned with framing the problem, defining the object model, and demonstrating a prototype direction.
+
+The current thesis continues from that base. Its focus is no longer the justification of ELA as an idea, but the implementation, validation, and critical assessment of ELA as an engineering system. This distinction matters: the current contribution should be evaluated on what was operationalized, tested, stabilized, and discovered during implementation.
+
+\section{From Conceptual Prototype to Implemented System}
+The project evolved along three main axes:
+\begin{enumerate}
+  \item \textbf{Architectural maturation.} Earlier design descriptions emphasized a concept-driven prototype and a more speculative integration of external AI services. The current implementation shifts the core truth layer toward deterministic parsing, rules, and validation, with generated content treated as an enrichment path rather than the foundation of correctness.
+  \item \textbf{Expansion of the data contract.} The RLE concept was converted into a more formal and stricter contract that now includes node identifiers, parent relationships, source spans, dependency information, trace metadata, translations, and multiple enrichments.
+  \item \textbf{Operational workflow.} The project now includes a runtime service, client persistence, media pipeline, frontend routes, export paths, and a large test surface. This moves ELA closer to a usable software product while also exposing implementation weaknesses that a purely conceptual report could avoid.
+\end{enumerate}
+
+\section{Research Continuity}
+Despite the architectural shift, the underlying continuity is strong. Both the earlier thesis and the current project maintain the same central educational premise: authentic English should remain intact, and support should be attached through structured interpretation rather than through simplification. The implementation phase did not replace that vision; it forced it into a more disciplined computational form.
+
+\section{What Is New in This Thesis}
+The new contributions are best understood in contrast to the earlier report:
+\begin{itemize}
+  \item the earlier thesis introduced ELA and RLE conceptually; this thesis documents a running full-stack implementation;
+  \item the earlier thesis argued for explainability; this thesis shows how that explainability is represented in contract fields, validators, runtime APIs, and frontend views;
+  \item the earlier thesis treated the custom model path as future work; this thesis can discuss concrete experimentation with T5 note generation, placeholders, and dataset engineering;
+  \item the earlier thesis framed the system optimistically; this thesis must account for real regressions, trade-offs, and incomplete stabilization.
+\end{itemize}
+
+\chapter{The RLE Data Model}
+\section{Design Rationale}
+Recursive Linguistic Elements (RLE) form the central data contract of ELA. The purpose of RLE is to translate parser output and downstream enrichments into a single representation that is stable enough for storage and validation, expressive enough for machine processing, and simple enough to be rendered in a learner-facing visualizer.
+
+\section{Hierarchy}
+The implemented hierarchy uses three conceptual layers:
+\begin{enumerate}
+  \item \textbf{Sentence} as the root pedagogical and analytical unit;
+  \item \textbf{Phrase} as an intermediate structure carrying meaningful chunks such as noun phrases, prepositional phrases, or other grouped spans;
+  \item \textbf{Word} as the terminal lexical unit carrying finer grammatical metadata.
+\end{enumerate}
+
+This structure is recursive because every non-terminal node contains a \texttt{linguistic\_elements} array of child nodes. That makes the contract easy to traverse, validate, render, and export.
+
+\section{Core Fields}
+The contract uses a mixture of required and optional fields. The exact field set evolved during implementation, but the most important fields include:
+\begin{itemize}
+  \item \texttt{type}, \texttt{content}, and \texttt{part\_of\_speech};
+  \item \texttt{tense}, \texttt{aspect}, \texttt{mood}, \texttt{voice}, and \texttt{finiteness};
+  \item \texttt{node\_id}, \texttt{parent\_id}, and \texttt{source\_span};
+  \item \texttt{grammatical\_role}, \texttt{dep\_label}, and \texttt{head\_id};
+  \item \texttt{linguistic\_notes}, \texttt{notes}, and note provenance-related fields;
+  \item \texttt{translations}, \texttt{phonetic}, \texttt{synonyms}, and \texttt{cefr\_level};
+  \item \texttt{schema\_version} and quality-control trace fields.
+\end{itemize}
+
+\section{Validation Modes}
+The implementation retains two validation modes:
+\begin{itemize}
+  \item \textbf{v1}, intended as the backward-compatible mode;
+  \item \textbf{v2\_strict}, intended as the current production-facing mode with stronger field requirements.
+\end{itemize}
+
+This dual-mode design is useful in theory because it enables controlled migration. In practice, the implementation review shows that validation compatibility is still imperfect, especially around null handling in TAM fields and around runtime payload expectations.
+
+\section{Contract Example}
+Listing~\ref{lst:rleexample} presents a simplified example of a sentence-level RLE node.
+
+\begin{lstlisting}[style=jsonstyle,caption={Simplified RLE contract example},label={lst:rleexample}]
+{
+  "type": "Sentence",
+  "content": "She should have trusted her instincts.",
+  "schema_version": "v2",
+  "node_id": "s1",
+  "parent_id": null,
+  "source_span": { "start": 0, "end": 39 },
+  "part_of_speech": "sentence",
+  "grammatical_role": "root",
+  "tense": null,
+  "aspect": "perfect",
+  "mood": "modal",
+  "voice": "active",
+  "finiteness": "finite",
+  "translations": {
+    "m2m100": {
+      "source_lang": "en",
+      "target_lang": "ru",
+      "text": "..."
+    }
+  },
+  "linguistic_notes": {
+    "elementary": "...",
+    "intermediate": "...",
+    "advanced": "..."
+  },
+  "linguistic_elements": []
+}
+\end{lstlisting}
+
+\section{Why Hierarchical JSON}
+Hierarchical JSON was chosen over flatter annotation forms for several reasons:
+\begin{itemize}
+  \item it matches the recursive structure required by the visualizer;
+  \item it allows sentence, phrase, and word nodes to share a common schema family;
+  \item it supports machine validation and human inspection simultaneously;
+  \item it simplifies serialization for runtime storage, export, and testing.
+\end{itemize}
+
+\begin{table}[H]
+  \centering
+  \caption{Hierarchical RLE versus flatter annotation approaches}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.5cm}X X}
+    \toprule
+    Criterion & Hierarchical RLE & Flat annotation \\
+    \midrule
+    Structural nesting & Native & Requires external linking \\
+    Frontend rendering & Direct tree traversal & Extra assembly layer needed \\
+    Validation & Node-by-node plus subtree rules & Easier locally, weaker globally \\
+    Pedagogical readability & Strong for progressive disclosure & Often fragmented \\
+    Export simplicity & High for JSON workflows & Higher for spreadsheets only \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\chapter{Context--Pattern Duality and Placeholder Generalisation}
+\section{Observed Problem}
+During the note-generation experiments, a recurring issue appeared: when the training material preserved too much lexical surface detail, the model tended to memorize examples instead of learning transferable pedagogical structure. This was especially problematic because ELA requires generalization to previously unseen vocabulary inside familiar grammatical patterns.
+
+\section{Observed Improvement}
+Performance improved after restructuring the target space around more abstract templates and placeholders. Instead of tying the generation task tightly to concrete lexical tokens, the revised setup emphasized structural roles and reusable pattern slots. The practical result was a stronger ability to produce pedagogical notes for unseen examples that shared grammatical structure with the training material.
+
+\section{Interpretive Framework}
+This thesis interprets that behavior through a context--pattern duality:
+\begin{itemize}
+  \item during training, many contextual examples shape the internal pattern space of the model;
+  \item during inference, the now-frozen patterns interpret new contextual instances.
+\end{itemize}
+
+In simple terms, context forms pattern in the open training phase, while pattern forms context in the closed inference phase. This is not presented here as a formal theorem. It is an empirical observation arising from the project's modelling path and used as an explanatory framework for why placeholder abstraction improved generalization.
+
+\section{Lexical Invariance}
+The key idea behind the placeholder strategy is lexical invariance. If the model learns to associate structural markers with pedagogical interpretation, then the same pattern can be reused when the surrounding words change. This is especially valuable in language learning, where the educational meaning of a structure often outlives any single example sentence.
+
+\section{Scope of the Claim}
+The claim should remain bounded. This thesis does not prove a universal law of learning systems, nor does it attempt to derive a physics result from model training behavior. The contribution is narrower and more defensible:
+\begin{itemize}
+  \item the project observed a generalization gain after switching from raw lexical notation to structurally abstract templates;
+  \item the context--pattern duality provides a coherent explanation of that gain;
+  \item the interpretation is useful for designing pedagogical generation tasks in ELA and similar systems.
+\end{itemize}
+
+\chapter{System Architecture and Implementation}
+\section{System Overview}
+The implemented ELA system spans backend processing, runtime orchestration, storage, media handling, and a learner-facing frontend. At a high level, the architecture can be read as a pipeline from authentic input to explainable output.
+
+\begin{figure}[H]
+  \centering
+  \fbox{\parbox{0.88\textwidth}{
+    \centering
+    Figure placeholder: high-level ELA architecture showing input ingestion, runtime/media pipeline, deterministic contract build, enrichment layers, persistence, API server, and React/Vite frontend.
+  }}
+  \caption{High-level architecture of the implemented ELA system}
+\end{figure}
+
+\section{Backend Linguistic Pipeline}
+The core pipeline is implemented in Python under the \texttt{ela\_pipeline} package. The project README and module structure indicate a rules-first design with the following major stages:
+\begin{enumerate}
+  \item input ingestion and segmentation;
+  \item parser-backed skeleton construction;
+  \item deterministic TAM enrichment;
+  \item optional CEFR, note, translation, phonetic, and synonym enrichment;
+  \item contract validation;
+  \item persistence and export.
+\end{enumerate}
+
+One of the most important architectural decisions is that structural truth is not left to a generative model. Parser output, rule logic, and validators form the trust boundary, while generated content is treated as controlled enrichment.
+
+\begin{table}[H]
+  \centering
+  \caption{Rules-first ownership in the implemented ELA pipeline}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.7cm}X X}
+    \toprule
+    Layer & Main responsibility & Why this matters \\
+    \midrule
+    spaCy + skeleton builder & structural graph, sentence/phrase/word hierarchy, POS, dependency-backed spans & keeps core representation deterministic and inspectable \\
+    TAM rules & tense, aspect, mood, voice, finiteness, TAM construction logic & prevents free-form generation from inventing grammar labels \\
+    Tabular or classifier path & CEFR-oriented predictive enrichment and blueprint support & separates classification from free-form wording \\
+    Controlled renderer / note path & lexical realization of learner-facing note text & constrains generation to wording rather than structure \\
+    Validator & contract safety, schema enforcement, field ownership boundaries & enforces architectural discipline across all later stages \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Runtime Service and API Layer}
+Beyond offline inference scripts, the current system includes a dedicated runtime layer responsible for project management, client storage, media submission, background processing, UI state, and an HTTP bridge for the frontend. This is a major step beyond the earlier thesis, which focused more on conceptual architecture than on operational service boundaries.
+
+The runtime layer also reveals one of the current weaknesses of the project: the service has become strict enough to expose inconsistencies between expected frontend payloads and actual sentence-node shapes. That makes the runtime layer useful both as an application service and as a form of architectural pressure test.
+
+\section{Frontend}
+The frontend is implemented as a React/Vite progressive web application. It organizes the user experience around projects, files, analysis, vocabulary, configuration, and a linguistic visualizer. Compared with the earlier Kivy-centred prototype framing, this frontend reflects a move toward a more modern web-oriented delivery model and a clearer separation between presentation and processing.
+
+\section{Media Processing}
+The media path extends ELA beyond text. Audio and video flow through extraction, transcription, sentence preparation, optional translation, and artifact rendering. The runtime also includes subtitle generation and media export paths. This makes ELA a multimodal learning system rather than a text-only analysis tool.
+
+\section{Persistence and Export}
+The project contains both local client-side persistence and backend-oriented repository layers, with SQLite and PostgreSQL paths represented in the codebase. Export formats include JSON, CSV, and subtitle artifacts. This persistence strategy supports reproducibility, resumability, and inspection outside the application.
+
+\section{Contract Safety as an Architectural Principle}
+The technical specification dated 2026-03-20 is explicit that the next-stage architecture should remain classifier-first and contract-safe. In that design, the linguistic contract is not free-form model output. It is the source context from which later rendering is derived. This leads to clear ownership boundaries: the generator may realize wording, but it must not overwrite structural fields such as node identifiers, parent links, source spans, dependency fields, grammar classes, or CEFR predictions. That separation is one of the strongest engineering ideas in the project because it ties explainability to field ownership rather than to UI rhetoric alone.
+
+\chapter{Dataset and Corpus Engineering}
+\section{Why Dataset Engineering Matters}
+The implemented system is not driven by a single end-to-end model. As a result, dataset engineering matters differently across subsystems. CEFR estimation, note generation, and future model directions each depend on curated and interpretable training material rather than on generic scraped corpora alone.
+
+\section{Source Families}
+The repository indicates several source families and dataset-building paths, including curated corpora, open linguistic resources, and derived educational examples. The codebase and documentation reference sources such as UD-style corpora, OANC, Gutenberg-derived material, MASC, and rulebook or handbook extraction pipelines.
+
+\section{Deduplication and Quality Control}
+A recurring theme in the project documentation is that raw volume is not enough. The system places substantial effort into:
+\begin{itemize}
+  \item filtering and capping repeated targets;
+  \item excluding low-quality or telemetry-like note text;
+  \item preserving CEFR balance and grammar-class coverage;
+  \item validating note suitability and trace fields;
+  \item reducing datasets to examples that remain useful after strict normalization.
+\end{itemize}
+
+\section{Placeholder Construction}
+The note-generation path appears to depend critically on converting enriched linguistic structures into more abstract templates. This is the point where dataset engineering and the context--pattern duality meet: the abstraction strategy is not only a training trick, but part of how the project reframes the pedagogical signal.
+
+\section{From Free-Form T5 to Controlled Rendering}
+The project documentation shows a clear evolution away from unconstrained note generation. By March 2026, the preferred architecture was no longer ``raw text to T5 note.'' The intended flow had become:
+\begin{enumerate}
+  \item validated linguistic contract;
+  \item deterministic structural enrichment;
+  \item CEFR prediction and blueprint generation;
+  \item contract-to-template transformation;
+  \item controlled lexical realization from that template;
+  \item post-render validation that classifier-owned and contract-owned fields remain unchanged.
+\end{enumerate}
+
+This evolution is important for the thesis because it supports a more mature claim than ``the system uses T5.'' The stronger claim is that generation is being progressively confined to the narrowest part of the problem where wording variation is desirable but structural drift is unacceptable.
+
+\section{Engineering Trade-off}
+The dataset story also shows a cost of rigor. As examples become deduplicated, normalized, and filtered, the final usable set becomes much smaller than the initial raw corpus. That is not a weakness by itself; it is evidence that the project values controlled signal over inflated raw counts. It does, however, place a ceiling on the strength of the current empirical claims.
+
+\chapter{Evaluation}
+\section{Evaluation Approach}
+The evaluation of ELA must be understood as layered rather than singular. There is no one metric that validates the entire system. Instead, different subsystems require different forms of evidence:
+\begin{itemize}
+  \item contract validity and structural correctness;
+  \item CEFR prediction quality;
+  \item pedagogical note generation quality;
+  \item media pipeline behavior;
+  \item end-to-end runtime usability.
+\end{itemize}
+
+\section{What the Current Evidence Supports}
+The project contains substantial test infrastructure and multiple evaluation artifacts. This supports several defensible conclusions:
+\begin{itemize}
+  \item the codebase is not a loose prototype but a systematically exercised system;
+  \item CEFR and note-generation paths were treated as measurable modelling problems rather than hand-waved add-ons;
+  \item media, runtime, and persistence layers were tested as first-class concerns.
+\end{itemize}
+
+\section{Classifier Path and Controlled Generation Evidence}
+One useful checkpoint in the repository is the phase-1 classifier execution report dated 2026-02-25. That report confirms an orchestrated training and quality-cycle run, classifier metadata generation, runtime sentence-contract validation, and controlled note rewriting behavior. At the same time, the same report also reveals a limitation that is academically important: the baseline freeze at that point still used a very small training set. This means the existence of the pipeline is strongly supported, while any broad performance claim should remain tied to the exact dataset version that produced it.
+
+\section{What the Current Evidence Does Not Fully Support}
+At the same time, the current development state also places important limits on the thesis claims. The current \texttt{dev} branch is not fully green under the project's own unit-test suite. Targeted failures remain in:
+\begin{itemize}
+  \item node-level translation propagation;
+  \item phrase and sentence skeleton behavior;
+  \item validation-mode consistency around TAM fields;
+  \item ASR sentence resegmentation and metadata filtering;
+  \item parts of the runtime-service integration boundary.
+\end{itemize}
+
+This matters because it affects how evaluation should be written. The system can be defended as substantial and technically serious, but not as fully stabilized across every path.
+
+\section{Representative Findings from Review}
+The implementation review identified the following representative engineering realities:
+\begin{itemize}
+  \item the runtime layer strongly validates frontend-visible payloads, which is architecturally good, but currently exposes payload-shape mismatches;
+  \item the skeleton builder remains a critical subsystem, and regressions there have direct pedagogical consequences because phrase structure is learner-visible;
+  \item translation quality is not only a linguistic issue but also a structural one, because wrong projection to child nodes changes what the learner sees as local meaning;
+  \item the media path is operationally ambitious, but multimodal support is more fragile than the text path.
+\end{itemize}
+
+\section{Overall Assessment}
+Overall, the project evaluates well as a research-engineering system:
+\begin{itemize}
+  \item it is broad enough to demonstrate full-stack integration;
+  \item it is deep enough to support concrete architectural and modelling discussion;
+  \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening.
+\end{itemize}
+
+\chapter{Discussion, Limitations, and Future Work}
+\section{Discussion}
+The implemented ELA system supports the central thesis direction: authentic language can be made more accessible through layered structural explanation rather than through simplification. The combination of hierarchical representation, deterministic truth layers, and learner-facing visualization remains the strongest and most coherent aspect of the project.
+
+The most interesting deeper result is that abstraction appears to matter more than raw model complexity in pedagogical generation. The placeholder-based route suggests that the project achieved its clearest modelling gains not by escalating model size, but by refining representational form.
+
+\section{Limitations}
+The current limitations are both scientific and engineering-related:
+\begin{itemize}
+  \item some reported metrics still require careful reconciliation with the precise artifacts that produced them;
+  \item the current branch contains unresolved regressions in the core pipeline;
+  \item multimodal support is more fragile than text-only processing;
+  \item some claims inherited from earlier project narratives need weaker wording in light of the current implementation state;
+  \item the project still lacks a full user-study layer capable of demonstrating educational impact beyond technical plausibility.
+\end{itemize}
+
+\section{Future Work}
+The most immediate future work falls into three clusters:
+\begin{enumerate}
+  \item \textbf{Stabilization.} Resolve current regressions in skeleton construction, translation projection, runtime validation boundaries, and media sentence preparation.
+  \item \textbf{Model path maturation.} Continue the abstraction-based note-generation line, expand dataset evidence, and strengthen the empirical basis of the context--pattern duality claim.
+  \item \textbf{Product hardening.} Improve media playback, subtitle synchronization, packaging, deployment consistency, and frontend/runtime ergonomics.
+\end{enumerate}
+
+\chapter{Conclusion}
+This thesis has presented ELA as the continuation of an earlier research programme into explainable support for authentic English input. The project has evolved from a concept and prototype direction into a substantial full-stack implementation built around the RLE contract, a rules-first linguistic pipeline, multimodal processing, and a learner-facing frontend.
+
+The core technical lesson of the work is twofold. First, explainability requires architecture, not just model output: contracts, validators, runtime boundaries, and structural representations matter. Second, abstraction in the training signal appears to be a decisive factor in pedagogical note generation, motivating the context--pattern duality as the main interpretive research contribution of this phase.
+
+The project is not finished. Its current codebase still exposes unresolved regressions and integration mismatches, especially in the runtime and multimodal paths. Yet that incompleteness does not weaken the value of the thesis; it clarifies it. ELA is best understood not as a polished consumer product, but as a serious and well-developed research-engineering system that has already produced a reusable architecture, a coherent representation model, and a promising modelling insight for future work.
+
+\appendix
+
+\chapter{Representative Code and Contract Material}
+This appendix can be extended in a later revision with selected code excerpts, schema fragments, or runtime examples drawn from the implementation. For the present version, the main report retains only a simplified contract example in Chapter 4 so that the thesis remains readable without becoming a code listing archive.
+
+\chapter{Selected Screens and Figures}
+This appendix can be populated with screenshots from the ELA frontend, visualizer, and media workflow once the final report figures are prepared.
+
+\chapter*{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
+\begin{enumerate}[label={[\arabic*]}]
+  \item A. Gilmore, ``Authentic materials and authenticity in foreign language learning,'' \emph{Language Teaching}, vol. 40, no. 2, pp. 97--118, 2007.
+  \item W. Guariento and J. Morley, ``Text and task authenticity in the EFL classroom,'' \emph{ELT Journal}, vol. 55, no. 4, pp. 347--353, 2001.
+  \item S. A. Berardo, ``The use of authentic materials in the teaching of reading,'' \emph{The Reading Matrix}, vol. 6, no. 2, pp. 60--69, 2006.
+  \item G. Levy, \emph{Computer-Assisted Language Learning: Context and Conceptualization}. Oxford, UK: Clarendon Press, 1997.
+  \item C. A. Chapelle, \emph{Computer Applications in Second Language Acquisition}. Cambridge, UK: Cambridge University Press, 2001.
+  \item M. Honnibal and I. Montani, ``spaCy 3: Industrial-strength Natural Language Processing in Python,'' 2023.
+  \item C. Raffel et al., ``Exploring the limits of transfer learning with a unified text-to-text transformer,'' \emph{Journal of Machine Learning Research}, vol. 21, no. 140, pp. 1--67, 2020.
+  \item A. Radford et al., ``Robust speech recognition via large-scale weak supervision,'' in \emph{Proceedings of ICML}, 2023.
+  \item A. Fan et al., ``Beyond English-centric multilingual machine translation,'' \emph{Journal of Machine Learning Research}, vol. 22, no. 107, pp. 1--48, 2021.
+  \item T. Chen and C. Guestrin, ``XGBoost: A scalable tree boosting system,'' in \emph{Proceedings of KDD}, 2016, pp. 785--794.
+  \item V. Rastvorov, \emph{ELA: English Language Assistant}. Research thesis, Munster Technological University Cork, 2025.
+\end{enumerate}
+
+\end{document}
