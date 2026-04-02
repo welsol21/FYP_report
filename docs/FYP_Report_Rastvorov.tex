@@ -795,11 +795,51 @@ In that sense, the continuation from the earlier research thesis is successful. 
 
 \appendix
 
-\chapter{Representative Code and Contract Material}
-This appendix can be extended in a later revision with selected code excerpts, schema fragments, or runtime examples drawn from the implementation. For the present version, the main report retains only a simplified contract example in Chapter 4 so that the thesis remains readable without becoming a code listing archive.
+\chapter{Repository Evidence Sources}
+Table~\ref{tab:repoevidence} summarizes the main repository artifacts used to support the thesis claims. The purpose of this appendix is not to reproduce those documents in full, but to make explicit which internal sources informed architectural, evaluative, and historical statements in the main body.
 
-\chapter{Selected Screens and Figures}
-This appendix can be populated with screenshots from the ELA frontend, visualizer, and media workflow once the final report figures are prepared.
+\begin{table}[H]
+  \centering
+  \caption{Representative repository evidence sources used in this thesis}
+  \label{tab:repoevidence}
+  \begin{tabularx}{\textwidth}{p{5.2cm}X}
+    \toprule
+    \textbf{Repository artifact} & \textbf{Thesis role} \\
+    \midrule
+    Project README set & high-level system narrative, feature inventory, and implementation scope \\
+    Full pipeline documentation & broad architectural description of the pipeline and runtime responsibilities \\
+    Technical specification dated 2026-03-20 & system-level technical specification and contract-oriented implementation detail \\
+    Template expansion strategy v16 & evidence for controlled rendering and placeholder-driven note-generation strategy \\
+    Canonical book-to-dataset process note dated 2026-03-21 & evidence for dataset construction and contract-to-template processing flow \\
+    Phase-1 classifier execution report dated 2026-02-25 & checkpoint evidence for classifier orchestration and small-baseline limitations \\
+    Full-ladder tabular evaluation artifact dated 2026-03-05 & concrete metrics snapshot for later-stage tabular evaluation \\
+    PWA integration test note & evidence for end-to-end PWA and runtime interaction testing \\
+    Docker deployment note & deployment and packaging evidence for the implementation story \\
+    Current unit-test suite and targeted failing tests & evidence for both maturity and unresolved regressions in the present branch \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\chapter{Evaluation Artifact Index}
+The project contains multiple evaluation checkpoints rather than a single immutable benchmark. Table~\ref{tab:evidencelevels} indexes the main classes of evidence used in the report and clarifies what each can and cannot support academically.
+
+\begin{table}[H]
+  \centering
+  \caption{Evidence categories and their interpretive strength in the current thesis}
+  \label{tab:evidencelevels}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.7cm}>{\bfseries}p{3.2cm}X}
+    \toprule
+    Evidence class & Strength level & Appropriate use in the thesis \\
+    \midrule
+    Running code and compiled thesis output & High & supports claims that the project exists as an operational software artifact with reproducible document output \\
+    Contract schema, validators, and runtime interfaces & High & supports claims about architectural intent, field ownership, and explainability-oriented system design \\
+    Evaluation JSON checkpoints and classifier reports & Medium to high & supports checkpoint-specific metric claims when the producing dataset and phase are stated explicitly \\
+    Integration tests and runtime smoke paths & Medium & supports claims that cross-layer workflows were implemented and exercised end to end \\
+    Targeted failing tests on the current branch & High for limitations & supports current-state limitation claims and prevents overstating maturity \\
+    Earlier thesis and narrative planning documents & Medium & supports continuity and design intent, but not unconditional statements about the current branch \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \chapter*{Bibliography}
 \addcontentsline{toc}{chapter}{Bibliography}
