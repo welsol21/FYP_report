@@ -354,6 +354,13 @@ The implementation retains two validation modes:
 
 This dual-mode design is useful in theory because it enables controlled migration. In practice, the implementation review shows that validation compatibility is still imperfect, especially around null handling in TAM fields and around runtime payload expectations.
 
+\section{How the Contract Evolved in Practice}
+The repository history shows that the RLE contract did not appear fully formed. It was expanded through a series of practical corrections driven by downstream needs. Early contract work focused on making the pipeline valid and testable at all. Later commits then added normalized morphology features, dependency linkage fields, grammatical roles, node metadata, trace fields, strict validation mode, modal-perfect policy enforcement, translation validation, and subtree-level backoff diagnostics.
+
+This evolution matters because each addition corresponds to a concrete pressure from the rest of the system. Node identifiers and parent links were needed for deterministic graph identity and frontend selection. Source spans were needed for alignment, translation projection, and edit targeting. Grammatical roles and dependency fields were needed so that the tree was not merely a nested display object, but a linguistically meaningful structure. Trace fields and rejected-candidate statistics were needed because once the project started filtering, retrying, and validating generated notes, the contract also had to record why certain outputs were accepted or rejected.
+
+The migration to recursive hierarchy is especially important in this story. The git history shows an explicit transition away from legacy flat rules toward the recursive node contract. That move made the visualizer, runtime payloads, validator logic, and later controlled note-generation path all speak the same structural language. It also made the contract more demanding: once recursive identity and field ownership became central, schema drift and null-handling issues became more visible rather than easier to ignore.
+
 \section{Contract Example}
 Listing~\ref{lst:rleexample} presents a simplified example of a sentence-level RLE node.
 
@@ -396,6 +403,8 @@ The repository's canonical sample contract makes several implementation decision
   \item \texttt{grammar\_classes}, \texttt{note\_blueprints}, and \texttt{note\_generator\_version} preserve the distinction between structural evidence and rendered learner-facing wording;
   \item \texttt{source\_span}, \texttt{node\_id}, and \texttt{parent\_id} are intended to make every node referentially stable enough for UI selection, validation, and later editing.
 \end{itemize}
+
+The field-ownership matrix dated 2026-03-04 clarifies why this sample matters architecturally. The contract is not meant to be a place where one model predicts everything. Instead, different field families belong to different sources of truth: parser and builder rules own structure, rules-first logic owns TAM and grammatical interpretation, tabular ML owns CEFR, and T5 is constrained to learner-facing note wording only. This is one of the most important implementation outcomes of the whole project, because it turns the contract from a passive schema into an active boundary between deterministic truth, predictive enrichment, and generated phrasing.
 
 \begin{table}[H]
   \centering
