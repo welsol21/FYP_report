@@ -256,6 +256,29 @@ The new contributions are best understood in contrast to the earlier report:
   \item the earlier thesis framed the system optimistically; this thesis must account for real regressions, trade-offs, and incomplete stabilization.
 \end{itemize}
 
+\section{Methodological Approach of This Thesis}
+The work reported here follows a hybrid engineering-research methodology. It is not a purely theoretical study, nor is it a simple build diary. Instead, the thesis combines:
+\begin{itemize}
+  \item architectural analysis of the implemented codebase;
+  \item examination of project specifications, README-level documentation, and internal reports;
+  \item review of test coverage and targeted failing tests on the current branch;
+  \item analysis of selected evaluation artifacts produced during model and pipeline development;
+  \item comparison with the earlier research thesis in order to isolate what is genuinely new in the final-year implementation phase.
+\end{itemize}
+
+This methodological framing matters because ELA evolved over time. Different documents in the repository describe different moments of the project. The thesis therefore treats the repository as a historical engineering record rather than as a single perfectly synchronized artifact.
+
+\section{Project Risks}
+From the perspective of the final thesis, the main risks are not only technical but evidential:
+\begin{itemize}
+  \item \textbf{claim drift}: older project narratives may overstate capabilities that the current code does not fully stabilize;
+  \item \textbf{metric drift}: different evaluation checkpoints may produce different headline numbers;
+  \item \textbf{integration risk}: runtime, frontend, and pipeline layers evolve at different speeds, so stricter validation may expose mismatches;
+  \item \textbf{scope risk}: the system spans too many subsystems for every path to be equally mature at submission time.
+\end{itemize}
+
+Recognizing these risks improves the quality of the report. It encourages careful wording, checkpoint-specific evidence, and explicit distinction between implemented baseline, experimental branch, and future direction.
+
 \chapter{The RLE Data Model}
 \section{Design Rationale}
 Recursive Linguistic Elements (RLE) form the central data contract of ELA. The purpose of RLE is to translate parser output and downstream enrichments into a single representation that is stable enough for storage and validation, expressive enough for machine processing, and simple enough to be rendered in a learner-facing visualizer.
@@ -562,6 +585,18 @@ The evaluation of ELA must be understood as layered rather than singular. There 
   \item media pipeline behavior;
   \item end-to-end runtime usability.
 \end{itemize}
+
+\section{Evaluation Method}
+The thesis uses a mixed evidence strategy rather than a single benchmark suite. Evaluation evidence is drawn from:
+\begin{itemize}
+  \item structured project documents describing architectural intent and pipeline evolution;
+  \item sample contract artifacts and schema definitions;
+  \item explicit evaluation JSON and report checkpoints;
+  \item broad unit-test coverage across classifier, runtime, media, contract, and validation layers;
+  \item targeted reproduction of failing tests in the current branch to identify active regressions.
+\end{itemize}
+
+This is appropriate for the current state of ELA because the project is simultaneously a research artifact, a software system, and a still-evolving product. A thesis that ignored any one of those layers would misrepresent the actual nature of the work.
 
 \section{What the Current Evidence Supports}
 The project contains substantial test infrastructure and multiple evaluation artifacts. This supports several defensible conclusions:
