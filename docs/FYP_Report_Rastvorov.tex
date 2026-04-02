@@ -691,6 +691,8 @@ The project contains substantial test infrastructure and multiple evaluation art
 \section{Classifier Path and Controlled Generation Evidence}
 One useful checkpoint in the repository is the phase-1 classifier execution report dated 2026-02-25. That report confirms an orchestrated training and quality-cycle run, classifier metadata generation, runtime sentence-contract validation, and controlled note rewriting behavior. At the same time, the same report also reveals a limitation that is academically important: the baseline freeze at that point still used a very small training set. This means the existence of the pipeline is strongly supported, while any broad performance claim should remain tied to the exact dataset version that produced it.
 
+This early checkpoint becomes much more informative when read together with later classifier artifacts. The repository contains a progression from this tiny baseline freeze toward a substantially larger full-ladder tabular run. That progression matters because it shows that the classifier path did not remain a proof of concept. It was scaled, compared, and stress-tested as the project matured.
+
 \section{Concrete Tabular Evaluation Snapshot}
 Another useful artifact is the full-ladder tabular evaluation snapshot dated 2026-03-05. Unlike broad narrative claims, this file gives a concrete checkpoint with explicit split sizes and summary metrics:
 
@@ -714,6 +716,13 @@ Another useful artifact is the full-ladder tabular evaluation snapshot dated 202
 \end{table}
 
 This snapshot is useful for two reasons. First, it proves that at least one later evaluation stage moved far beyond the tiny baseline freeze described in the February phase-1 report. Second, it shows why metric claims must be attributed carefully: different documents in the repository reflect different phases, datasets, and evaluation scopes. For the thesis, the safest strategy is to treat metrics as checkpoint-specific rather than as timeless project constants.
+
+\section{Comparative Evidence and Intermediate Results}
+The evaluation story becomes stronger when the intermediate and comparative artifacts are treated as part of the evidence rather than ignored as noise. For example, the March 2026 comparison between the tabular full-ladder path and the DeBERTa-based full-ladder path shows that the tabular route became the stronger practical choice for the production-oriented stack. In that comparison, the DeBERTa CEFR-only hygiene smoke result achieved only 0.1612 accuracy and 0.0463 macro-F1, while collapsing almost all predictions to the `C1` class. This is a valuable engineering result because it explains why the project moved away from treating the heavier classifier path as the obvious runtime default.
+
+The note-generation artifacts tell a similarly important story. Intermediate T5 evaluation reports in directories such as \texttt{results\_llm\_notes\_refresh\_data\_processed\_e2} show structurally valid training and evaluation runs, but still very weak exact-match behavior on the measured target space. Earlier template-id and refresh experiments therefore matter as negative evidence: they show that simply running T5 over a notation-like target did not automatically produce useful pedagogical output. The later placeholder and controlled-rendering direction should be understood as a response to those weak intermediate results rather than as an arbitrary conceptual preference.
+
+This layered reading of the artifacts is important for the thesis. A convincing evaluation chapter should not present only the best surviving checkpoint. It should show that the project made decisions in response to evidence: weak template-id target diversity, weak practical fallback behavior, tiny early classifier datasets, failed or underperforming comparative routes, and then stronger later checkpoints that justified a narrower architecture.
 
 \section{What the Current Evidence Does Not Fully Support}
 At the same time, the current development state also places important limits on the thesis claims. The current \texttt{dev} branch is not fully green under the project's own unit-test suite. Targeted failures remain in:
@@ -741,7 +750,8 @@ Overall, the project evaluates well as a research-engineering system:
 \begin{itemize}
   \item it is broad enough to demonstrate full-stack integration;
   \item it is deep enough to support concrete architectural and modelling discussion;
-  \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening.
+  \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening;
+  \item it preserves enough intermediate evidence to explain why later design decisions were made.
 \end{itemize}
 
 \section{End-to-End Integration Perspective}
