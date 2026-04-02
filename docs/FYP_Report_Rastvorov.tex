@@ -533,6 +533,8 @@ Beyond offline inference scripts, the current system includes a dedicated runtim
 
 The runtime layer also reveals one of the current weaknesses of the project: the service has become strict enough to expose inconsistencies between expected frontend payloads and actual sentence-node shapes. That makes the runtime layer useful both as an application service and as a form of architectural pressure test.
 
+The runtime API is also concrete enough to describe as a product boundary rather than as an internal helper. The deployment documentation lists endpoints for project creation, selected-project state, file registration, media submission, backend-job status, visualizer payload retrieval, and edit application. This matters for the thesis because it shows that the implementation phase did not stop at ``produce JSON.'' It built a service layer through which the learner workflow could actually operate.
+
 \begin{table}[H]
   \centering
   \caption{Representative runtime/API responsibilities described in the current project documentation}
@@ -553,6 +555,8 @@ The runtime layer also reveals one of the current weaknesses of the project: the
 \section{Frontend}
 The frontend is implemented as a React/Vite progressive web application. It organizes the user experience around projects, files, analysis, vocabulary, configuration, and a linguistic visualizer. Compared with the earlier Kivy-centred prototype framing, this frontend reflects a move toward a more modern web-oriented delivery model and a clearer separation between presentation and processing.
 
+The frontend development note is particularly useful because it records the practical scope of what was actually implemented. It confirms a project-first flow of `Projects -> Files -> Analyze`, project-scoped file registration, stage progress reporting, artifact download actions, sentence-by-sentence visualizer navigation, translation-provider handling, quick node edit controls, and vocabulary export. It also records an important architectural subtraction: backend media-job UI controls were removed after the client-first runtime decision. That kind of removal is as important as an added feature because it shows that the final architecture was shaped by narrowing responsibilities, not only by accumulating them.
+
 \section{PWA and End-to-End Workflow Evidence}
 The repository also contains a dedicated PWA integration-test guide intended for pre-deployment verification. That document is useful because it describes the system not as isolated modules but as an end-to-end learner workflow:
 \begin{enumerate}
@@ -565,13 +569,17 @@ The repository also contains a dedicated PWA integration-test guide intended for
   \item verify the appearance of generated downloadable artifacts.
 \end{enumerate}
 
-This is important evidence for the thesis because it shows that the project explicitly tests real browser behavior and long-running media paths, not only narrow unit-level logic. It also reinforces a major theme of the implementation phase: the final system must be assessed as a workflow, not only as a set of isolated NLP functions.
+This is important evidence for the thesis because it shows that the project explicitly tests real browser behavior and long-running media paths, not only narrow unit-level logic. The same test guide also captures several resolved operational problems, such as model-installation readiness, Vite proxy configuration, service-worker cache staleness, and the move away from FFmpeg drawtext rendering toward a Canvas-based video rendering path. It therefore functions as both a verification checklist and a compact record of implementation lessons learned under real end-to-end conditions.
 
 \section{Media Processing}
 The media path extends ELA beyond text. Audio and video flow through extraction, transcription, sentence preparation, optional translation, and artifact rendering. The runtime also includes subtitle generation and media export paths. This makes ELA a multimodal learning system rather than a text-only analysis tool.
 
+The implementation record shows that this path changed materially during development. Earlier branches experimented with backend-oriented media jobs, but the client-first product specification and later commits narrowed the architecture toward local processing for interactive media work, explicit duration and file-size gates, and clearer offline/online behavior. This is a significant architectural result because it demonstrates that multimodality was not simply bolted on; it forced the project to make explicit decisions about privacy, runtime capability, failure boundaries, and where heavy processing should live.
+
 \section{Persistence and Export}
 The project contains both local client-side persistence and backend-oriented repository layers, with SQLite and PostgreSQL paths represented in the codebase. Export formats include JSON, CSV, and subtitle artifacts. This persistence strategy supports reproducibility, resumability, and inspection outside the application.
+
+The persistence story is also historically meaningful. Commits and product notes show a move from lightweight local repositories toward a more explicit split between device-local workspace state and backend-backed shared or synchronized state. That split helps explain several later design choices: selected-project persistence in the frontend, local edit capture, resumable media workflows, and the minimal-identity policy documented for backend deployment.
 
 \section{Contract Safety as an Architectural Principle}
 The technical specification dated 2026-03-20 is explicit that the next-stage architecture should remain classifier-first and contract-safe. In that design, the linguistic contract is not free-form model output. It is the source context from which later rendering is derived. This leads to clear ownership boundaries: the generator may realize wording, but it must not overwrite structural fields such as node identifiers, parent links, source spans, dependency fields, grammar classes, or CEFR predictions. That separation is one of the strongest engineering ideas in the project because it ties explainability to field ownership rather than to UI rhetoric alone.
@@ -584,7 +592,7 @@ The Docker deployment documentation shows that ELA is no longer just a local res
   \item a frontend container serving the React interface through Nginx.
 \end{itemize}
 
-The same documentation is also useful because it avoids overclaiming. It explicitly distinguishes \texttt{online} and \texttt{offline} runtime modes, notes that model downloads may be disabled at runtime, and states that some features are unavailable in stricter offline or distributed policies. This is exactly the kind of nuance the final thesis should keep.
+The same documentation is also useful because it avoids overclaiming. It explicitly distinguishes \texttt{online} and \texttt{offline} runtime modes, notes that model downloads may be disabled at runtime, and states that some features are unavailable in stricter offline or distributed policies. It also makes deployment policy visible as part of the architecture itself through environment-level constraints for media duration, media size, phonetic availability, deployment mode, and runtime download permissions. This is exactly the kind of nuance the final thesis should keep, because it turns ``offline-first'' and ``privacy-first'' from slogans into constrained operational modes with explicit trade-offs.
 
 \chapter{Dataset and Corpus Engineering}
 \section{Why Dataset Engineering Matters}
