@@ -450,6 +450,23 @@ Beyond offline inference scripts, the current system includes a dedicated runtim
 
 The runtime layer also reveals one of the current weaknesses of the project: the service has become strict enough to expose inconsistencies between expected frontend payloads and actual sentence-node shapes. That makes the runtime layer useful both as an application service and as a form of architectural pressure test.
 
+\begin{table}[H]
+  \centering
+  \caption{Representative runtime/API responsibilities described in the current project documentation}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{4.1cm}X}
+    \toprule
+    Runtime concern & Role \\
+    \midrule
+    Project and file state & manage learner projects, selected project state, and media registration \\
+    Sentence-contract path & expose text-to-contract processing through HTTP endpoints \\
+    Media submission & route uploads through local processing or policy-based rejection paths \\
+    Background job handling & support long-running tasks and status polling for media workflows \\
+    Visualizer payload delivery & provide contract trees back to the frontend in UI-facing form \\
+    Edit and synchronization layer & preserve local edits, retry paths, and resume-oriented workflow state \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \section{Frontend}
 The frontend is implemented as a React/Vite progressive web application. It organizes the user experience around projects, files, analysis, vocabulary, configuration, and a linguistic visualizer. Compared with the earlier Kivy-centred prototype framing, this frontend reflects a move toward a more modern web-oriented delivery model and a clearer separation between presentation and processing.
 
@@ -461,6 +478,16 @@ The project contains both local client-side persistence and backend-oriented rep
 
 \section{Contract Safety as an Architectural Principle}
 The technical specification dated 2026-03-20 is explicit that the next-stage architecture should remain classifier-first and contract-safe. In that design, the linguistic contract is not free-form model output. It is the source context from which later rendering is derived. This leads to clear ownership boundaries: the generator may realize wording, but it must not overwrite structural fields such as node identifiers, parent links, source spans, dependency fields, grammar classes, or CEFR predictions. That separation is one of the strongest engineering ideas in the project because it ties explainability to field ownership rather than to UI rhetoric alone.
+
+\section{Deployment and Service Boundaries}
+The Docker deployment documentation shows that ELA is no longer just a local research script collection. The intended deployed form has three clear service boundaries:
+\begin{itemize}
+  \item PostgreSQL for persistent storage;
+  \item an application container for inference, runtime APIs, and migrations;
+  \item a frontend container serving the React interface through Nginx.
+\end{itemize}
+
+The same documentation is also useful because it avoids overclaiming. It explicitly distinguishes \texttt{online} and \texttt{offline} runtime modes, notes that model downloads may be disabled at runtime, and states that some features are unavailable in stricter offline or distributed policies. This is exactly the kind of nuance the final thesis should keep.
 
 \chapter{Dataset and Corpus Engineering}
 \section{Why Dataset Engineering Matters}
@@ -632,6 +659,22 @@ The current limitations are both scientific and engineering-related:
   \item the project still lacks a full user-study layer capable of demonstrating educational impact beyond technical plausibility.
 \end{itemize}
 
+\begin{table}[H]
+  \centering
+  \caption{Current implementation limitations and their practical impact}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{4.1cm}X}
+    \toprule
+    Limitation area & Practical impact on the thesis or system \\
+    \midrule
+    Metric fragmentation across phases & prevents careless use of a single headline number for the whole project \\
+    Runtime-service payload mismatch & shows that architectural strictness currently outpaces some frontend/runtime integration assumptions \\
+    Skeleton and translation regressions & directly affect learner-visible tree quality and node-level interpretation \\
+    Multimodal fragility & makes text processing more stable than audio/video processing in the current branch \\
+    Lack of large-scale user study & limits pedagogical claims to technical plausibility and architecture-backed rationale \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \section{Future Work}
 The most immediate future work falls into three clusters:
 \begin{enumerate}
@@ -639,6 +682,8 @@ The most immediate future work falls into three clusters:
   \item \textbf{Model path maturation.} Continue the abstraction-based note-generation line, expand dataset evidence, and strengthen the empirical basis of the context--pattern duality claim.
   \item \textbf{Product hardening.} Improve media playback, subtitle synchronization, packaging, deployment consistency, and frontend/runtime ergonomics.
 \end{enumerate}
+
+Beyond those immediate priorities, the documentation also points toward longer-horizon directions: tighter offline packaging of runtime models, richer translation quality gates, broader corpus growth, and more disciplined separation between classification, controlled rendering, and user-facing editing workflows.
 
 \chapter{Conclusion}
 This thesis has presented ELA as the continuation of an earlier research programme into explainable support for authentic English input. The project has evolved from a concept and prototype direction into a substantial full-stack implementation built around the RLE contract, a rules-first linguistic pipeline, multimodal processing, and a learner-facing frontend.
