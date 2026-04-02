@@ -455,6 +455,13 @@ During the note-generation experiments, a recurring issue appeared: when the tra
 \section{Observed Improvement}
 Performance improved after restructuring the target space around more abstract templates and placeholders. Instead of tying the generation task tightly to concrete lexical tokens, the revised setup emphasized structural roles and reusable pattern slots. The practical result was a stronger ability to produce pedagogical notes for unseen examples that shared grammatical structure with the training material.
 
+\section{Empirical Path to the Claim}
+The repository history shows that this idea did not appear as a finished theory from the start. It emerged through several practical turns. An early template-ID experiment on 2026-02-13 confirmed that deterministic template wiring was in place, but it also exposed a serious problem: after balancing, the dataset had only 511 rows, only 10 unique targets, and a duplicate ratio above 0.98, while both the refreshed baseline and the template-ID model produced a fallback rate of 1.0 on the small regression probe. In other words, the first attempt to constrain the target space became too collapsed to be useful.
+
+This failure is important because it shows what the project actually learned. Placeholder-based abstraction helped only when it expanded transferable structure without collapsing target diversity. The later strategy documents therefore move away from ``T5 predicts the pedagogical truth'' and toward a classifier-first architecture in which compact structural prompts predict a closed template space and the final note is rendered from slots. This is a narrower but much more defensible use of abstraction.
+
+The later artifacts also show why the interpretation remained valuable after that failed intermediate stage. By March 2026, the pipeline documentation and contract field-ownership rules had converged on the same separation: the contract and blueprints carry structural truth, while T5 is allowed to realize wording only. A phase-1 execution report dated 2026-02-25 confirms that this controlled rewrite path preserved classifier-owned blueprint fields while still producing user-facing generated notes. That is a much stronger foundation for the current thesis claim than raw seq2seq optimism would have been.
+
 \section{Interpretive Framework}
 This thesis interprets that behavior through a context--pattern duality:
 \begin{itemize}
@@ -466,6 +473,8 @@ In simple terms, context forms pattern in the open training phase, while pattern
 
 \section{Lexical Invariance}
 The key idea behind the placeholder strategy is lexical invariance. If the model learns to associate structural markers with pedagogical interpretation, then the same pattern can be reused when the surrounding words change. This is especially valuable in language learning, where the educational meaning of a structure often outlives any single example sentence.
+
+The measured artifacts support a bounded version of this claim. Sample inference reports from the later hybrid book-enriched note path show exact sentence-level matches for several structurally distinct cases, including second conditionals, do-support negation, passive-plus-perfect constructions, existential agreement, and yes/no questions with auxiliary support. At the same time, phrase-level examples in the same artifact still expose unresolved slot-surface issues, because placeholder tokens such as \texttt{PART\_OF\_SPEECH} and \texttt{GRAMMATICAL\_ROLE} were emitted too literally. This matters for the thesis argument: the project did not discover perfect abstraction, but it did discover that lexical invariance becomes useful when the right information is abstracted and the remaining wording is tightly controlled.
 
 \section{Scope of the Claim}
 The claim should remain bounded. This thesis does not prove a universal law of learning systems, nor does it attempt to derive a physics result from model training behavior. The contribution is narrower and more defensible:
