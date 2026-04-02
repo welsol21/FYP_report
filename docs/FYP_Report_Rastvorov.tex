@@ -200,25 +200,42 @@ The remainder of this report is structured as follows. Chapter 2 reviews the bac
 
 \chapter{Background and Related Work}
 \section{Computer-Assisted Language Learning}
-Computer-Assisted Language Learning (CALL) provides the pedagogical backdrop of ELA. Classical CALL systems focused on drills, exercises, and tightly constrained curricula. More recent systems incorporate adaptation, learner modelling, and richer multimodal interaction. However, even modern tools frequently rely on simplified input and opaque support mechanisms. ELA aligns instead with the strand of CALL that values learner autonomy, authentic materials, and graduated support.
+Computer-Assisted Language Learning (CALL) provides the pedagogical backdrop of ELA. Classical CALL systems focused on drills, exercises, and tightly constrained curricula. More recent systems incorporate adaptation, learner modelling, multimodal content, and mobile delivery. Even so, a large portion of practical CALL still prioritizes task completion and fluency support over structural transparency. The learner receives an answer, a translation, or a corrected sentence, but not necessarily an interpretable representation of why the form is what it is.
+
+ELA aligns with a narrower strand of CALL that values learner autonomy, authentic materials, and graduated support. In that tradition, software should not simply replace the learner's analysis; it should externalize part of the analysis in a form that the learner can inspect. This matters especially in independent learning scenarios, where the system must function not only as an exercise engine but as a structured explanatory companion.
 
 \section{Authentic Materials and Cognitive Support}
-Authentic materials are attractive because they preserve the linguistic richness of real communication. They also create a difficulty gap: the very features that make authentic input useful also make it cognitively demanding. ELA addresses this gap by layering support over the original text rather than rewriting it. This places the project at the intersection of authenticity, scaffolding, and transparency.
+Authentic materials are attractive because they preserve the lexical, syntactic, pragmatic, and stylistic richness of real communication. They expose the learner to naturally occurring tense shifts, ellipsis, collocation, discourse markers, and speaker intent in a way that sanitized textbook examples often do not. At the same time, the very properties that make authentic input valuable also make it cognitively demanding.
+
+This creates a design tension. If the material is simplified too aggressively, authenticity is lost. If it is left untouched without support, the learner can become overloaded. ELA addresses this gap by layering support over the original input rather than rewriting it. The project therefore sits at the intersection of authenticity, scaffolding, and transparency: it tries to preserve the original utterance while exposing interpretable structure around it.
 
 \section{NLP Parsing and Structured Analysis}
-The system relies on modern NLP tooling to obtain syntactic and morphological signals, especially tokenization, dependency parsing, and part-of-speech tagging. These signals are not presented directly to the learner in raw form. Instead, they are transformed into a controlled representation that supports later enrichment and visualization.
+The system relies on modern NLP tooling to obtain syntactic and morphological signals, especially tokenization, dependency parsing, lemmatization, and part-of-speech tagging. These signals are useful, but they are not themselves a learner-facing representation. Raw parser output is often unstable, implementation-specific, and difficult to expose directly in a pedagogical interface.
+
+ELA therefore treats parsing as an evidence source rather than as the final user model. Parser outputs are normalized into a controlled hierarchical representation that can support enrichment, validation, storage, and visualization. This distinction is important: the project is not merely a wrapper over an NLP library, but an attempt to convert low-level linguistic signals into a stable pedagogical contract.
 
 \section{Tense, Aspect, and Mood}
-Verb morphology is central to pedagogical explanation in ELA. Rather than relying on a black-box generator to infer tense-aspect-mood information, the implemented system uses a deterministic rules layer over parser output. This is a deliberately conservative engineering choice: it improves transparency, allows explicit quality checks, and constrains downstream note generation.
+Verb morphology is central to pedagogical explanation in ELA because tense, aspect, and mood are among the most common sources of learner confusion. In many learning tools, TAM interpretation is either hidden inside a black-box model or reduced to surface labels that are difficult to audit. ELA adopts a more conservative approach. The implemented system uses a deterministic rules layer over parser output to infer TAM-related information and to preserve traceable links between grammatical evidence and pedagogical phrasing.
+
+This is not only an engineering convenience. It is also a methodological choice. A deterministic TAM layer makes failure analysis easier, allows targeted tests, and prevents downstream note generation from becoming the sole source of grammatical truth.
 
 \section{CEFR Estimation}
-The Common European Framework of Reference for Languages offers a useful scale for expressing difficulty and pedagogical level. In ELA, CEFR is used as an enrichment layer for sentence and node-level interpretation. The project includes multiple explored approaches, but the implemented system converges on a lighter-weight, feature-driven path for practical deployment.
+The Common European Framework of Reference for Languages offers a widely recognized scale for expressing learner difficulty and progression. In ELA, CEFR is not treated as a complete pedagogical theory, but as a practical enrichment layer that helps characterize sentence and node difficulty in a form familiar to teachers and learners.
+
+The repository shows that multiple approaches were explored, including classifier-driven and tabular strategies. The implemented system converges toward a lighter-weight deployment path because it is easier to integrate into a contract-oriented architecture and easier to reason about operationally. This reflects a broader pattern in the project: simpler, auditable components are often preferred when they fit the explanatory goals better than heavier black-box alternatives.
 
 \section{Sequence-to-Sequence Models and T5}
-Sequence-to-sequence models are relevant because pedagogical note generation in ELA is not a pure classification problem. It requires controlled text generation from structured inputs. T5-style models are suitable for this kind of mapping, but the project evidence suggests that representation strategy matters as much as model choice. The strongest note-generation behavior did not come simply from applying a larger model, but from restructuring the training signal.
+Sequence-to-sequence models are relevant because pedagogical note generation in ELA is not a pure classification problem. It requires controlled wording generation from structured inputs. T5-style models are a natural fit for this kind of mapping, especially when the input can be expressed as a text-like notation carrying grammatical state.
+
+However, the project evidence suggests that representation strategy matters at least as much as model choice. The strongest note-generation behavior did not come simply from scaling model size or training longer. Instead, it emerged when the training signal was restructured through placeholders and canonicalized patterns. This observation motivates the later discussion of context--pattern duality.
 
 \section{Automatic Speech Recognition and Translation}
-Authentic language learning is not restricted to text. ELA therefore extends to audio and video through ASR, subtitle generation, and translation enrichment. Whisper-based transcription and M2M100-based translation represent the local-first, model-based path in the system, while additional providers remain optional or comparative extensions.
+Authentic language learning is not restricted to text. Spoken input introduces pronunciation, pacing, disfluency, and subtitle alignment problems that do not appear in static text. ELA therefore extends to audio and video through ASR, sentence segmentation, subtitle generation, and translation enrichment.
+
+Whisper-based transcription and M2M100-based translation represent the local model path visible in the codebase and documentation, while additional providers remain optional or comparative extensions. This multimodal dimension makes ELA more ambitious than a text-only parser, but it also increases integration fragility because sentence boundaries, timestamps, and translated artifacts must remain synchronized across several layers.
+
+\section{Explainability as a Systems Property}
+An important implication of the preceding literature is that explainability in language-learning software cannot be reduced to a single model output. A system becomes explainable when its internal representation, validation boundaries, interface structure, and learner-facing presentation all support inspection. This is why ELA invests so heavily in an intermediate contract. The RLE structure is not just a storage convenience; it is the mechanism through which parser evidence, grammatical interpretation, bilingual support, and frontend visualization remain aligned.
 
 \section{Gap Analysis}
 The main gap targeted by ELA is the absence of a single learner-facing platform that takes authentic multimodal English input and converts it into a structured, hierarchical, explainable, and exportable pedagogical representation. Existing tools may offer translation, subtitles, grammar help, or media playback, but ELA's distinguishing aim is the combination of:
@@ -719,7 +736,9 @@ The PWA integration documentation provides one more useful perspective on evalua
 \section{Discussion}
 The implemented ELA system supports the central thesis direction: authentic language can be made more accessible through layered structural explanation rather than through simplification. The combination of hierarchical representation, deterministic truth layers, and learner-facing visualization remains the strongest and most coherent aspect of the project.
 
-The most interesting deeper result is that abstraction appears to matter more than raw model complexity in pedagogical generation. The placeholder-based route suggests that the project achieved its clearest modelling gains not by escalating model size, but by refining representational form.
+The most interesting deeper result is that abstraction appears to matter more than raw model complexity in pedagogical generation. The placeholder-based route suggests that the project achieved its clearest modelling gains not by escalating model size, but by refining representational form. In practical terms, the project moved from asking a model to memorize many surface realizations toward asking it to learn a more stable mapping between structural context and explanatory pattern.
+
+This is also where the engineering and research layers of the thesis meet most clearly. The same design instinct that pushed the runtime toward stricter contracts and deterministic boundaries also pushed the note-generation path toward canonicalized training signals. In both cases, the project became stronger when implicit variation was converted into explicit structure.
 
 \section{Limitations}
 The current limitations are both scientific and engineering-related:
@@ -755,7 +774,7 @@ The most immediate future work falls into three clusters:
   \item \textbf{Product hardening.} Improve media playback, subtitle synchronization, packaging, deployment consistency, and frontend/runtime ergonomics.
 \end{enumerate}
 
-Beyond those immediate priorities, the documentation also points toward longer-horizon directions: tighter offline packaging of runtime models, richer translation quality gates, broader corpus growth, and more disciplined separation between classification, controlled rendering, and user-facing editing workflows.
+Beyond those immediate priorities, the documentation also points toward longer-horizon directions: tighter offline packaging of runtime models, richer translation quality gates, broader corpus growth, stronger observability around pipeline failures, and more disciplined separation between classification, controlled rendering, and user-facing editing workflows.
 
 \chapter{Conclusion}
 This thesis has presented ELA as the continuation of an earlier research programme into explainable support for authentic English input. The project has evolved from a concept and prototype direction into a substantial full-stack implementation built around the RLE contract, a rules-first linguistic pipeline, multimodal processing, and a learner-facing frontend.
