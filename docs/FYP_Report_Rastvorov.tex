@@ -610,6 +610,8 @@ The implemented system is not driven by a single end-to-end model. As a result, 
 \section{Source Families}
 The repository indicates several source families and dataset-building paths, including curated corpora, open linguistic resources, and derived educational examples. The codebase and documentation reference sources such as UD-style corpora, OANC, Gutenberg-derived material, MASC, and rulebook or handbook extraction pipelines.
 
+The cumulative book-processing summaries show that this source work was substantial rather than illustrative. In the source-first cumulative summary version v5, the repository records 11 processed book families, 16,248 raw pairs, 14,740 clean pairs, and 8,412 final rows after later row selection, with strong variation by source. For example, the summary attributes 2,746 rows to the Oxford Dictionary path, 2,222 to the Cambridge Dictionary path, and 1,835 to English Grammar Today. These counts matter because they show that the dataset story is not limited to one textbook or one synthetic source; it is the result of repeated extraction and cleaning passes over multiple pedagogical resources.
+
 \section{Curation and Stabilization}
 The curator progress report presents the project as having reached a more stable baseline through five linked improvements:
 \begin{enumerate}
@@ -632,6 +634,8 @@ A recurring theme in the project documentation is that raw volume is not enough.
   \item reducing datasets to examples that remain useful after strict normalization.
 \end{itemize}
 
+The practical effect of this policy is visible in the processed dataset statistics. One hybrid T5 contract-target dataset built from the projected corpus started with 2,510 rows and ended with only 380 rows after deduplication and balancing, with 2,130 rows skipped by target-cap controls alone. This is a strong sign that the project prioritized controllable target diversity over raw size. It also explains why some intermediate model results remained weak: the engineering decision to compress and normalize the target space trades scale for discipline.
+
 \section{Placeholder Construction}
 The note-generation path appears to depend critically on converting enriched linguistic structures into more abstract templates. This is the point where dataset engineering and the context--pattern duality meet: the abstraction strategy is not only a training trick, but part of how the project reframes the pedagogical signal.
 
@@ -649,6 +653,14 @@ The canonical process document dated 2026-03-21 makes that transformation explic
 \end{enumerate}
 
 This is a stronger and more specific claim than ``the system uses placeholders.'' It shows that placeholders are intended to sit at the centre of the full data path from source extraction to runtime note realization.
+
+The later slot-normalized projection artifacts make this even more concrete. In the v17 slot-normalized projection report, the repository records 3,505 projected rows, including 1,984 sentence-level slot-templated rows and 6,584 phrase-level slot-templated rows, with additional lexicalized-note repairs recorded explicitly. This demonstrates that placeholder construction was not only a conceptual strategy; it was operationalized as a measurable transformation stage over a large projected corpus.
+
+\section{Template Opportunity Analysis}
+The repository also contains reports that measure not just what was extracted, but what remained uncovered by the current template inventory. A template-opportunities report over the slot-normalized projection records 513 exact sentence families in projection, of which 205 had book notes and 202 already had book slot templates. The same report identifies phrase families with much weaker template coverage, especially around relative-clause-heavy phrase patterns. This is important because it shows that dataset engineering in ELA included gap analysis, not only corpus growth. The project did not simply build a dataset and train on it; it also measured where the current template space failed to cover the observed grammar families.
+
+\section{Measured Template Space}
+The classification-oriented template datasets show that even the template inventory itself was treated as a measurable object. One sentence-multilabel template dataset built from the covered projection reports 1,774 rows after filtering, 48 total template identifiers, 42 sentence template types, and 6 phrase template types. These counts matter because they convert the abstract idea of ``template diversity'' into something inspectable. They also help explain why some model and coverage decisions in later chapters could be made with more confidence: the project had begun to quantify the shape of its pedagogical pattern space rather than relying on intuition alone.
 
 \section{From Free-Form T5 to Controlled Rendering}
 The project documentation shows a clear evolution away from unconstrained note generation. By March 2026, the preferred architecture was no longer ``raw text to T5 note.'' The intended flow had become:
