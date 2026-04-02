@@ -168,6 +168,8 @@ Most digital language-learning systems lower difficulty by reducing or simplifyi
 \section{Problem Statement}
 The problem addressed in this project is the lack of a transparent, learner-facing system that can process authentic English across text, audio, and video, preserve the original linguistic structure, and expose just enough grammatical and bilingual support to improve comprehension. Existing systems typically optimize for fluency drills, vocabulary repetition, or black-box assistance. ELA instead targets explainable decomposition of authentic input into interpretable linguistic units.
 
+In scope for this thesis are the implemented architecture, the linguistic contract, the multimodal runtime path, the frontend-facing visualization flow, and the experimental line around note-generation abstraction. Out of scope are large-scale classroom deployment and strong claims of measured learning gain through user studies. This boundary is intentional: the thesis evaluates a research-engineering system, not a fully validated educational product.
+
 \section{Research Questions}
 This thesis is guided by three research questions:
 \begin{enumerate}
@@ -194,6 +196,8 @@ The main contributions of this thesis are:
   \item a research interpretation of the placeholder strategy for note generation through the context--pattern duality;
   \item a critical evaluation of the current system, including implemented capabilities, empirical evidence, and unresolved limitations.
 \end{itemize}
+
+Taken together, these contributions position the thesis as both an implementation report and an argument about representational design. The software contribution is the operational ELA stack itself. The research contribution is the claim that stronger pedagogical behaviour emerged when linguistic variation was reorganized into more stable structural forms.
 
 \section{Thesis Structure}
 The remainder of this report is structured as follows. Chapter 2 reviews the background fields relevant to ELA. Chapter 3 positions the current work as a continuation of the earlier research thesis and explains the project evolution. Chapter 4 defines the RLE data model. Chapter 5 examines the context--pattern duality. Chapter 6 presents the implemented system architecture. Chapter 7 discusses dataset and corpus engineering. Chapter 8 evaluates the system. Chapter 9 discusses limitations and future work. Chapter 10 concludes the thesis.
@@ -781,7 +785,9 @@ This thesis has presented ELA as the continuation of an earlier research program
 
 The core technical lesson of the work is twofold. First, explainability requires architecture, not just model output: contracts, validators, runtime boundaries, and structural representations matter. Second, abstraction in the training signal appears to be a decisive factor in pedagogical note generation, motivating the context--pattern duality as the main interpretive research contribution of this phase.
 
-The project is not finished. Its current codebase still exposes unresolved regressions and integration mismatches, especially in the runtime and multimodal paths. Yet that incompleteness does not weaken the value of the thesis; it clarifies it. ELA is best understood not as a polished consumer product, but as a serious and well-developed research-engineering system that has already produced a reusable architecture, a coherent representation model, and a promising modelling insight for future work.
+The project is not finished. Its current codebase still exposes unresolved regressions and integration mismatches, especially in the runtime and multimodal paths. Yet that incompleteness does not weaken the value of the thesis; it clarifies it. ELA is best understood not as a polished consumer product, but as a serious research-engineering system whose value lies in what has already been made explicit: a reusable architecture, a contract-centered representation model, a credible multimodal workflow, and a modelling direction that can be tested further rather than merely asserted.
+
+In that sense, the continuation from the earlier research thesis is successful. The original pedagogical vision was not abandoned during implementation; it was forced into concrete interfaces, validators, services, datasets, and failure cases. That transition from concept to accountable system is the real achievement documented in this report.
 
 \appendix
 
