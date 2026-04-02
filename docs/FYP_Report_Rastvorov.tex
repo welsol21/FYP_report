@@ -821,6 +821,8 @@ The current limitations are both scientific and engineering-related:
   \item the project still lacks a full user-study layer capable of demonstrating educational impact beyond technical plausibility.
 \end{itemize}
 
+The repository planning artifacts show that these limits are not abstract caveats added after the fact. Several unfinished items in the working TODO trail correspond directly to the current discussion. Examples include moving \texttt{grammar\_classes} ownership fully into the rules-first runtime path, deciding whether DeBERTa remains a research branch or is fully retired from the mainline runtime story, and tightening provenance and licensing evidence for some advanced-corpus packages. This matters because the remaining work is now relatively concrete: the project is no longer blocked by lack of direction, but by stabilization, ownership cleanup, and proof discipline.
+
 \begin{table}[H]
   \centering
   \caption{Current implementation limitations and their practical impact}
@@ -845,7 +847,9 @@ The most immediate future work falls into three clusters:
   \item \textbf{Product hardening.} Improve media playback, subtitle synchronization, packaging, deployment consistency, and frontend/runtime ergonomics.
 \end{enumerate}
 
-Beyond those immediate priorities, the documentation also points toward longer-horizon directions: tighter offline packaging of runtime models, richer translation quality gates, broader corpus growth, stronger observability around pipeline failures, and more disciplined separation between classification, controlled rendering, and user-facing editing workflows.
+The recent repository history suggests that this future work is likely to remain iterative rather than monolithic. Many 2026 fixes are not feature additions but corrective passes over translation routing, batch behavior, provider selection, stale translation cleanup, media caching, and rendering reliability. That pattern implies that the next mature phase of ELA will depend less on adding yet another model and more on reducing boundary mistakes between already existing components.
+
+Beyond those immediate priorities, the documentation also points toward longer-horizon directions: tighter offline packaging of runtime models, richer translation quality gates, broader corpus growth, stronger observability around pipeline failures, more disciplined separation between classification, controlled rendering, and user-facing editing workflows, and eventually a user-study layer that can test whether the explainable interface actually improves learner comprehension and retention under realistic use.
 
 \chapter{Conclusion}
 This thesis has presented ELA as the continuation of an earlier research programme into explainable support for authentic English input. The project has evolved from a concept and prototype direction into a substantial full-stack implementation built around the RLE contract, a rules-first linguistic pipeline, multimodal processing, and a learner-facing frontend.
