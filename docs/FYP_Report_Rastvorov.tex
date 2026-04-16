@@ -486,6 +486,16 @@ The claim should remain bounded. This thesis does not prove a universal law of l
   \item the interpretation is useful for designing pedagogical generation tasks in ELA and similar systems.
 \end{itemize}
 
+\section{Cross-Domain Evidence: The Same Pattern in Weather Forecasting}
+
+The scope statement above deliberately restricts the context--pattern claim to ELA and pedagogical note generation. However, the same structural observation emerged independently in a parallel domain during the same research period, which provides a degree of cross-domain confirmation that strengthens the interpretive framework without formally extending its scope.
+
+In a companion forecasting project using six years of hourly meteorological observations from a single Irish station, raw sensor time series for temperature, pressure, and wind speed were not fed directly to a sequence model. Instead, measurements were first compressed into sequences of analytical segments, each described by one of a small vocabulary of ODE-derived equation types --- \texttt{constant}, \texttt{linear}, \texttt{exponential}, \texttt{harmonic}, and \texttt{damped\_harmonic} for temperature, and a three-type vocabulary for pressure and wind speed --- together with its fitted parameters and duration. A transformer encoder was then trained to predict the next segment descriptor from a window of past ones. The model learns to predict the \emph{type and parameters of the next analytical regime}, not individual numeric measurements.
+
+The structural parallel to ELA is direct. In ELA, placeholder tokens replace specific lexical items so that the training signal emphasizes structural grammatical relationships rather than surface word sequences. In the weather project, ODE equation-type labels replace raw sensor values so that the model learns structural meteorological regime transitions rather than noisy point measurements. In both cases, the practical benefit arises from the same representational move: elevating the learning target from surface instances to analytical structural units, and then training a sequence model on the grammar of those units rather than on the raw signal.
+
+This convergence across two domains with no shared vocabulary, no shared data, and no shared model architecture is what gives the context--pattern duality its broader interest as an interpretive framework. The ELA case shows that structural abstraction improves pedagogical generalization in language learning. The weather case shows that analytical-unit decomposition supports regime-level forecasting in physical time series. Neither result was planned as a controlled test of the other, which makes the convergence more informative, not less. The pattern-sequence approach appears to be a property of the representational strategy, not an artefact of a particular domain or dataset.
+
 \chapter{System Architecture and Implementation}
 \section{System Overview}
 The implemented ELA system spans backend processing, runtime orchestration, storage, media handling, and a learner-facing frontend. At a high level, the architecture can be read as a pipeline from authentic input to explainable output.
