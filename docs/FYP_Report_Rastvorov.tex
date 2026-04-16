@@ -1016,19 +1016,30 @@ natural or artificial process:
         interpretability at every step.
 \end{enumerate}
 
-\subsection*{Broader Applicability}
+\subsection*{A New Methodology of Scientific Inquiry}
 
-The same three-step method is applicable, in principle, wherever analytical units of
-appropriate granularity can be defined. Electrocardiographic signals can be decomposed
-into characteristic waveform segments (P, QRS, T, and pathological variants) whose
-sequential structure carries diagnostic information independent of the specific amplitude
-values. Financial price series exhibit regime shifts between trend, mean-reversion, and
-high-volatility states that can be characterised analytically rather than by raw tick data.
-Genomic sequences are already studied as grammars of functional motifs and regulatory
-elements whose arrangement is more informative than their raw nucleotide composition.
-In each of these domains, the potential gain from operating on analytical units rather than
-raw measurements is the same: the model is not burdened with recovering low-level signal
-statistics; it is free to learn the higher-order sequential structure of regime transitions.
+The pattern-sequence approach is worth situating not only as a machine-learning technique
+but as a methodology of scientific inquiry in its own right --- one that became practically
+realisable only with the arrival of modern sequence models.
+Prior to the transformer era, identifying the analytical units of a domain and studying
+their sequential grammar was work reserved for domain experts investing years of manual
+analysis. The Periodic Table took Mendeleev a lifetime; the grammatical rules of natural
+language occupied generations of linguists; the ODE taxonomy of meteorological regimes
+exists only as informal folklore among forecasters.
+What the AI revolution makes possible is the \emph{automation of the grammar-learning step}:
+once a domain can be expressed as a sequence of interpretable analytical units, a
+transformer can extract the sequential regularities from historical data at a scale no human
+analyst could match.
+
+This positions the three-step method --- decompose, classify, learn the grammar ---
+as a candidate general framework for data-driven scientific understanding, distinct from
+both classical hypothesis-driven science and from the black-box statistical learning that
+characterises much of modern deep learning. It is interpretable because the units are
+analytically defined; it is powerful because the grammar is learned from data; and it is
+generalisable because the same architectural pattern --- segment, describe, sequence-model
+--- applies wherever recurring analytical regimes can be identified. The two domains
+examined in this thesis, natural language and meteorology, are early instances of what may
+prove to be a broader shift in how structured knowledge is extracted from complex systems.
 
 \subsection*{Scope and Limitations of the Hypothesis}
 
