@@ -859,14 +859,204 @@ The most interesting deeper result is that abstraction appears to matter more th
 
 This is also where the engineering and research layers of the thesis meet most clearly. The same design instinct that pushed the runtime toward stricter contracts and deterministic boundaries also pushed the note-generation path toward canonicalized training signals. In both cases, the project became stronger when implicit variation was converted into explicit structure.
 
-\section{From LLM Pattern Learning to New Physics: A Pattern-Based Hypothesis}
+\section{From LLM Pattern Learning to a General Scientific Method:
+         A Pattern-Sequence Hypothesis}
+
+The hypothesis formalised in this section did not originate as an abstract theoretical claim.
+It emerged through a sequence of practical observations during the ELA implementation work
+and was subsequently confirmed in a second, physically unrelated domain.
+The fact that the same core idea surfaced independently in two domains --- natural language
+pedagogy and meteorological forecasting --- is what elevates it from an engineering note to
+a candidate general principle.
+
+\subsection*{Origin in the ELA Pipeline Failure}
+
+The first encounter with the principle came from a practical failure rather than a design
+intention. When the training signal for the T5 note-generation path preserved full lexical
+surface detail, the model overfit to specific examples rather than learning transferable
+pedagogical patterns. The template-ID experiment of February 2026 made this concrete: after
+target-space balancing, the effective target inventory collapsed to only ten unique template
+identifiers, and the fallback rate on the small regression probe reached 1.0. The model had
+learned nothing useful because the surface form carried more variation than the structure ---
+and the model, given no incentive to the contrary, memorised the variation rather than
+the underlying pattern. The corrective move --- replacing raw notation with
+placeholder-bearing structural templates --- produced qualitatively different behaviour.
+The model began to generalize across vocabulary while preserving grammatical interpretation.
+This was the first empirical encounter with the claim: the structural pattern, not the
+surface form, carries the transferable signal.
+
+\subsection*{A Historical Precedent: Mendeleev's Grammar}
+
+The intellectual analogy that clarifies this observation most sharply predates machine
+learning by more than a century. Mendeleev did not discover new chemical elements. What he
+discovered was that elements, when arranged by their intrinsic properties,
+\emph{form repeating patterns} --- and that those patterns are predictive. When the
+sequence of known elements violated the expected structure, he did not discard the anomaly.
+He left an empty cell and predicted the properties of the missing element from the
+constraints imposed by its position in the pattern. The element was subsequently found.
+
+The method, stripped of its chemical content, consists of three steps: identify the minimal
+analytical unit of description appropriate to the domain, classify it, study the grammar
+of its sequential arrangements, and use that grammar to forecast. The Periodic Table is not
+a list of elements; it is a grammar of elemental transitions. This is precisely what the
+ELA and weather forecasting projects each implement in their respective domains. In neither
+case does the model learn to predict the raw surface. In both cases, it learns to predict
+the \emph{type and structure of the next analytical unit} in a sequential grammar.
+
+\subsection*{Language as the First Domain}
+
+In ELA, the analytical unit is the Recursive Linguistic Element node. Each sentence, phrase,
+and word node is described not by its specific lexical content but by its structural type,
+grammatical role, tense-aspect-mood classification, and position in the hierarchy. The
+placeholder-based training signal then asks the model to predict which structural pattern
+applies to a new example --- which note template, which grammatical regime --- rather than
+to memorise which words appeared in training. This is the open phase of the duality: many
+contextual examples, each with different surface vocabulary, carve a stable internal pattern
+space. In the closed inference phase, the frozen pattern then imposes structure on whatever
+new context arrives. This statement is formulated explicitly in the core hypothesis:
+
 \begin{quote}
-Effective training of an LLM is achieved when both the input and the output are represented as patterns with placeholders, and variability is realised not as a separate collection of individual cases, but as a structured system of filling those placeholders within the pattern.
+Effective training of an LLM is achieved when both the input and the output are represented
+as patterns with placeholders, and variability is realised not as a separate collection of
+individual cases, but as a structured system of filling those placeholders within the
+pattern.
 
-This gives rise to the hypothesis that, in open systems, context forms patterns, whereas in closed systems, stable patterns structure the permissible context of their realisation.
+This gives rise to the hypothesis that, in open systems, context forms patterns, whereas in
+closed systems, stable patterns structure the permissible context of their realisation.
 
-In turn, this suggests that the complexity of physical systems is determined not by an infinite multitude of variants, but by a limited set of stable patterns through which those variants become possible, reproducible, and interpretable.
+In turn, this suggests that the complexity of natural systems is determined not by an
+infinite multitude of variants, but by a limited set of stable patterns through which those
+variants become possible, reproducible, and interpretable.
 \end{quote}
+
+\subsection*{Weather Forecasting as the Second Domain}
+
+The most direct external evidence for the generality of this approach comes from parallel
+work on single-station meteorological forecasting conducted at Knock Airport, Ireland, using
+Met \'{E}ireann historical hourly data covering the period 2020--2026. In that system, raw
+sensor measurements are not fed directly to a model. Instead, the time series is first
+segmented into analytical intervals, each described by one of a small library of
+ODE-derived equation types: \texttt{constant}, \texttt{linear}, \texttt{exponential},
+\texttt{harmonic}, and \texttt{damped\_harmonic} for temperature, and a three-type
+vocabulary for pressure and wind speed. The choice of equation type and its fitted
+parameters constitute the vocabulary of meteorological regimes in precisely the same sense
+that RLE node types constitute the vocabulary of grammatical regimes in ELA.
+
+A transformer encoder is then trained to predict the \emph{sequence} of future ODE segment
+descriptors from a window of past ones. The model receives no atmospheric physics, no
+spatial observations, and no numerical weather prediction output. It learns only the
+sequential grammar of analytical meteorological units from six years of a single station's
+history. On a seven-day evaluation period in February 2026, the ensemble achieves a
+pressure mean absolute error of 0.89~hPa at the 12-hour horizon, a 34\% improvement
+over naive persistence (1.35~hPa), using no domain physics whatsoever. This is not a
+claim of superiority over operational numerical weather prediction systems; it is a proof
+of concept that the \emph{grammar of physical regimes is learnable from sequential
+analytical units alone}, exactly as the grammar of linguistic regimes proved learnable in
+ELA.
+
+The structural parallel between the two domains is summarised in Table~\ref{tab:domainparallel}.
+
+\begin{table}[H]
+  \centering
+  \caption{Structural parallel between the ELA and weather forecasting pattern-sequence approaches}
+  \label{tab:domainparallel}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.5cm}X X}
+    \toprule
+    Concept & ELA (language domain) & Weather forecasting domain \\
+    \midrule
+    Analytical unit &
+      RLE node (sentence, phrase, word) &
+      ODE segment (constant, linear, exponential, harmonic) \\
+    Unit descriptor &
+      type, TAM, grammatical role, CEFR level &
+      equation type, fitted parameters, duration \\
+    Sequence model &
+      transformer over RLE node sequences &
+      transformer over ODE segment sequences \\
+    Training signal &
+      structural templates with placeholders &
+      segment descriptor vectors \\
+    Predicted output &
+      next structural pattern and its template slots &
+      next segment type and fitted parameters \\
+    Decoded output &
+      learner-facing pedagogical note &
+      hourly meteorological forecast values \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection*{Formulation of the General Method}
+
+These two cases suggest a three-step method that may apply to any sufficiently regular
+natural or artificial process:
+
+\begin{enumerate}
+  \item \textbf{Decompose.}
+        Identify the minimal analytical unit of description appropriate to the domain.
+        The unit should be expressive enough to capture the essential structure of a
+        regime, compact enough to form a finite vocabulary, and grounded in domain
+        knowledge rather than derived purely from statistical clustering.
+        In language, the unit is the grammatical node with its TAM and role attributes.
+        In meteorology, it is the ODE segment type with its fitted parameters.
+
+  \item \textbf{Classify and sequence.}
+        Observe that naturally occurring instances of the process form sequences of these
+        units. Classify the units, record their transitions, and treat the sequence as the
+        primary object of study rather than the raw surface values.
+        The Periodic Table is the canonical example of this step applied to chemistry:
+        once elements are classified by their properties, the grammar of their arrangement
+        becomes visible and predictive.
+
+  \item \textbf{Learn the grammar and predict.}
+        Apply a sequence model to the classified unit stream. Because the model operates
+        on analytical descriptors rather than raw measurements, it learns the structural
+        regularities --- the grammar --- of regime transitions. Predictions are then
+        decoded back to surface form through the analytical units themselves, preserving
+        interpretability at every step.
+\end{enumerate}
+
+\subsection*{Broader Applicability}
+
+The same three-step method is applicable, in principle, wherever analytical units of
+appropriate granularity can be defined. Electrocardiographic signals can be decomposed
+into characteristic waveform segments (P, QRS, T, and pathological variants) whose
+sequential structure carries diagnostic information independent of the specific amplitude
+values. Financial price series exhibit regime shifts between trend, mean-reversion, and
+high-volatility states that can be characterised analytically rather than by raw tick data.
+Genomic sequences are already studied as grammars of functional motifs and regulatory
+elements whose arrangement is more informative than their raw nucleotide composition.
+In each of these domains, the potential gain from operating on analytical units rather than
+raw measurements is the same: the model is not burdened with recovering low-level signal
+statistics; it is free to learn the higher-order sequential structure of regime transitions.
+
+\subsection*{Scope and Limitations of the Hypothesis}
+
+The hypothesis should be understood as an empirical claim derived from two implemented
+cases, not as a formal theorem. Several important qualifications apply.
+
+First, the quality of the analytical decomposition is a decisive factor. If the vocabulary
+of units is too coarse, important distinctions collapse; if it is too fine, the model faces
+a large and sparsely populated unit space that is difficult to learn from. In both ELA and
+the weather project, vocabulary size was determined through domain knowledge and iterative
+refinement rather than by automated search, and that design investment is not free.
+
+Second, the generalization gains observed in both domains are bounded by evaluation scope.
+ELA's placeholder-based note generation was evaluated on a controlled annotation set; the
+weather forecasting result covers one week at one station during a challenging frontal
+passage. Neither result is sufficient to claim general superiority over all alternative
+approaches.
+
+Third, the claim is not that all complexity reduces to patterns in a mystical sense. The
+hypothesis is more practical: in domains where analytical decomposition is feasible, learning
+the grammar of analytical unit sequences is a more efficient and more interpretable strategy
+than learning directly from raw surface data. Whether that efficiency advantage survives in
+richer, noisier, or higher-dimensional domains is an open research question.
+
+The three-step method, the Mendeleev analogy, and the context--pattern duality together
+constitute the research contribution of this thesis that extends beyond ELA's engineering
+work. They represent a design philosophy tested in two domains and presented here as a
+candidate framework for further systematic investigation.
 
 \section{Limitations}
 The current limitations are both scientific and engineering-related:
