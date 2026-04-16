@@ -21,6 +21,8 @@
 \usepackage{amssymb}
 \usepackage{fancyhdr}
 \usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \definecolor{mtunavy}{HTML}{1B2A4A}
 \definecolor{mtuamber}{HTML}{F5C518}
@@ -489,12 +491,48 @@ The claim should remain bounded. This thesis does not prove a universal law of l
 The implemented ELA system spans backend processing, runtime orchestration, storage, media handling, and a learner-facing frontend. At a high level, the architecture can be read as a pipeline from authentic input to explainable output.
 
 \begin{figure}[H]
-  \centering
-  \fbox{\parbox{0.88\textwidth}{
-    \centering
-    Figure placeholder: high-level ELA architecture showing input ingestion, runtime/media pipeline, deterministic contract build, enrichment layers, persistence, API server, and React/Vite frontend.
-  }}
-  \caption{High-level architecture of the implemented ELA system}
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=mtunavy, rounded corners=3pt, fill=blue!4,
+              minimum width=7.8cm, minimum height=0.72cm, text centered,
+              font=\small\sffamily},
+  headerbox/.style={draw=mtunavy, rounded corners=3pt, fill=mtunavy!10,
+              minimum width=7.8cm, minimum height=0.72cm, text centered,
+              font=\small\bfseries\sffamily},
+  inputbox/.style={draw=mtunavy, rounded corners=3pt, fill=mtunavy!6,
+              minimum width=2.2cm, minimum height=0.60cm, text centered,
+              font=\small\sffamily},
+  arr/.style={->, >=Latex, thick, color=mtunavy!65}
+]
+\node[inputbox] (ntxt) at (-2.5, 0)  {Text};
+\node[inputbox] (naud) at ( 0,   0)  {Audio};
+\node[inputbox] (nvid) at ( 2.5, 0)  {Video};
+
+\node[box]       (ningest) at (0,-1.05) {Ingestion \& Segmentation};
+\node[box]       (nspacy)  at (0,-1.95) {spaCy Parser \;+\; Skeleton Builder};
+\node[box]       (ntam)    at (0,-2.85) {TAM Rules \;+\; Grammar Enrichment};
+\node[box]       (nenrich) at (0,-3.75)
+  {Enrichment: CEFR\quad Notes\quad Translation\quad Phonetic\quad Synonyms};
+\node[headerbox] (nrle)    at (0,-4.65)
+  {RLE Contract\quad (v2\_strict Validation)};
+\node[box]       (nstor)   at (0,-5.55)
+  {Persistence:\quad SQLite\,(local)\quad /\quad PostgreSQL\,(server)};
+\node[box]       (napi)    at (0,-6.45) {Runtime API Service};
+\node[headerbox] (nfront)  at (0,-7.35)
+  {React\,/\,Vite PWA\quad Visualizer\,$\cdot$\,Media Workflow\,$\cdot$\,Export};
+
+\draw[arr] (ntxt.south) -- ++(0,-0.18) -| (ningest.north);
+\draw[arr] (naud.south) -- (ningest.north);
+\draw[arr] (nvid.south) -- ++(0,-0.18) -| (ningest.north);
+\draw[arr] (ningest.south) -- (nspacy.north);
+\draw[arr] (nspacy.south)  -- (ntam.north);
+\draw[arr] (ntam.south)    -- (nenrich.north);
+\draw[arr] (nenrich.south) -- (nrle.north);
+\draw[arr] (nrle.south)    -- (nstor.north);
+\draw[arr] (nstor.south)   -- (napi.north);
+\draw[arr] (napi.south)    -- (nfront.north);
+\end{tikzpicture}
+\caption{High-level architecture of the implemented ELA system}
 \end{figure}
 
 \section{Technology Stack}
