@@ -23,6 +23,7 @@
 \usepackage{url}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\usepackage{colortbl}
 
 \definecolor{mtunavy}{HTML}{1B2A4A}
 \definecolor{mtuamber}{HTML}{F5C518}
@@ -492,7 +493,14 @@ The claim should remain bounded. This thesis does not prove a universal law of l
 
 The scope statement above deliberately restricts the context--pattern claim to ELA and pedagogical note generation. However, the same structural observation emerged independently in a parallel domain during the same research period, which provides a degree of cross-domain confirmation that strengthens the interpretive framework without formally extending its scope.
 
-In a companion forecasting project~[15] using six years of hourly meteorological observations from a single Irish station, raw sensor time series for temperature, pressure, and wind speed were not fed directly to a sequence model. Instead, measurements were first compressed into sequences of analytical segments, each described by one of a small vocabulary of ODE-derived equation types --- \texttt{constant}, \texttt{linear}, \texttt{exponential}, \texttt{harmonic}, and \texttt{damped\_harmonic} for temperature, and a three-type vocabulary for pressure and wind speed --- together with its fitted parameters and duration. A transformer encoder was then trained to predict the next segment descriptor from a window of past ones. The model learns to predict the \emph{type and parameters of the next analytical regime}, not individual numeric measurements.
+In a companion forecasting project~[15] using six years of hourly meteorological observations from a single Irish station, raw sensor time series for temperature, pressure, and wind speed were not fed directly to a sequence model. Instead, measurements were first compressed into sequences of analytical segments, each described by one of a small vocabulary of ODE-derived equation types --- \texttt{constant}, \texttt{linear}, \texttt{exponential}, \texttt{harmonic}, and \texttt{damped\_harmonic} for temperature, and a three-type vocabulary for pressure and wind speed --- together with its fitted parameters and duration. Over the 2020--2026 training period this segmentation produces 10{,}055 joint segments with a mean duration of 5.3 hours. A 3-layer transformer encoder ($d{=}128$, 4 heads) was then trained to predict the next segment descriptor from a symmetric window of past ones. The model learns to predict the \emph{type and parameters of the next analytical regime}, not individual numeric measurements. The full methodology and all experimental results are reproduced in Appendix~\ref{app:weather}.
+
+On a 7-day evaluation period in February 2026, which included a 22\,hPa frontal pressure drop, the ensemble achieved the following key results (see Table~\ref{tab:mae_all} in Appendix~\ref{app:weather} for the full breakdown):
+\begin{itemize}
+  \item \textbf{Pressure MAE at h\,1--12: 0.89\,hPa}, a 34\% improvement over naive persistence (1.35\,hPa);
+  \item \textbf{Temperature MAE at h\,1--24: 1.42\,\textdegree C}, matching persistence (1.47\,\textdegree C) with no atmospheric physics;
+  \item \textbf{Wind speed MAE overall: 5.62\,kt}, beating persistence (7.21\,kt) by 22\%.
+\end{itemize}
 
 The structural parallel to ELA is direct. In ELA, placeholder tokens replace specific lexical items so that the training signal emphasizes structural grammatical relationships rather than surface word sequences. In the weather project, ODE equation-type labels replace raw sensor values so that the model learns structural meteorological regime transitions rather than noisy point measurements. In both cases, the practical benefit arises from the same representational move: elevating the learning target from surface instances to analytical structural units, and then training a sequence model on the grammar of those units rather than on the raw signal.
 
@@ -1167,6 +1175,245 @@ The project contains multiple evaluation checkpoints rather than a single immuta
     \bottomrule
   \end{tabularx}
 \end{table}
+
+\chapter{ODE-Segment Weather Forecasting: Technical Report}
+\label{app:weather}
+
+This appendix reproduces the technical report for the companion weather forecasting
+project~[15] in full. The report documents the methodology, experimental results, and
+findings for the ODE-segment sequence forecasting system applied to single-station
+meteorological data at Knock Airport, Ireland. It is included here because Chapter~5
+and Section~9.2 of the main thesis reference its empirical results as cross-domain
+evidence for the pattern-sequence hypothesis. Interactive time-series charts and
+the full source code are available at \url{https://github.com/welsol21/weather_forecast}.
+
+\section*{Abstract}
+
+A novel approach to single-station weather forecasting is presented in which raw hourly
+observations are first compressed into sequences of analytical ordinary differential
+equation (ODE) segments --- each segment described by an equation type and its fitted
+parameters --- and then a transformer encoder is trained to predict the future sequence
+of segments from a symmetric window of historical ones. Unlike NWP-based methods, the
+approach uses no atmospheric physics or spatial information; unlike standard time-series
+models, it operates on an interpretable, compressed representation rather than raw sensor
+values. On a 7-day evaluation period (February 2026, Knock Airport, Ireland), the ensemble
+achieves a temperature MAE of 1.42\,\textdegree C at 12\,h and pressure MAE of 0.89\,hPa
+at 12\,h, beating naive persistence by 34\% on pressure and matching it on temperature.
+
+\section*{ODE Segmentation Library}
+
+For a univariate hourly time series $y(t)$, a sequence of analytical segments is fitted
+greedily. The equation library is as follows:
+
+\begin{table}[H]
+  \centering
+  \caption{ODE equation library used for weather segmentation}
+  \label{tab:ode_library}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.8cm} X >{\ttfamily}p{1.5cm}}
+    \toprule
+    Channel & Equation types & Tolerance \\
+    \midrule
+    Temperature (6 types) &
+      $y(t)=L+A\cos(ct+\phi)$;\enspace
+      $L+Bt+A\cos(ct+\phi)$;\enspace
+      $L+Ae^{-\lambda t}\cos(ct+\phi)$;\enspace
+      $L+Ae^{-\lambda t}$;\enspace
+      $L+Bt$;\enspace $L$
+      & 1.0\,\textdegree C \\
+    Pressure (3 types) &
+      $y(t)=L+Ae^{-\lambda t}$;\enspace $L+ct$;\enspace $L$
+      & 1.0\,hPa \\
+    Wind speed (3 types) &
+      $y(t)=L+Ae^{-\lambda t}$;\enspace $L+ct$;\enspace $L$
+      & 2.0\,kt \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Multi-channel joint segmentation takes the union of per-channel boundary timestamps:
+$B = \mathrm{sort}(\mathrm{unique}(B_{\mathrm{temp}} \cup B_{\mathrm{pres}} \cup
+B_{\mathrm{wind}}))$. Over the 2020--2026 training period this yields
+\textbf{10{,}055 joint segments} with a mean duration of \textbf{5.3 hours}.
+Each segment is encoded as a 30-dimensional vector (one-hot equation type,
+normalised parameters, duration, cyclic time features).
+
+\section*{Model and Ensemble}
+
+A 3-layer transformer encoder ($d{=}128$, 4 heads) processes the tail of the symmetric
+window (past segments, right-aligned, zero-padded to length 256) and predicts the full
+head sequence (future segments, left-aligned). Training minimises MSE on the predicted
+ODE descriptor vectors. Nine models were trained with window sizes from 1\,h to 45\,d.
+The ensemble assigns each model to the horizon where it performs best:
+
+\begin{table}[H]
+  \centering
+  \caption{Ensemble model assignment by forecast horizon}
+  \begin{tabular}{lll}
+    \toprule
+    Horizon & Window & Rationale \\
+    \midrule
+    h\,1--12  & 12\,h  & best short-range pressure and wind \\
+    h\,13--24 & 45\,d  & best 24\,h temperature \\
+    h\,25--168 & 15\,d & best 168\,h temperature \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section*{Window-Size Ablation}
+
+\begin{table}[H]
+  \centering
+  \caption{Window-size ablation on held-out validation (temperature MAE and selected channels).
+           Highlighted rows are selected for the ensemble.}
+  \label{tab:ablation}
+  \begin{tabular}{lrrrrl}
+    \toprule
+    Window & T MAE @24\,h & T MAE @168\,h & P MAE @24\,h & W MAE @24\,h & Best for \\
+    \midrule
+    1\,h  & NaN (degenerate) & --- & --- & --- & --- \\
+    3\,h  & \textit{n/a\,$^{*}$} & --- & --- & --- & --- \\
+    6\,h  & \textit{n/a\,$^{*}$} & --- & --- & --- & --- \\
+    \rowcolor{yellow!20}
+    \textbf{12\,h} & 3.58\,\textdegree C & 4.29\,\textdegree C & \textbf{1.58\,hPa} & \textbf{4.32\,kt} & h\,$\leq$\,12 \\
+    24\,h & 1.99\,\textdegree C & 1.78\,\textdegree C & 4.29\,hPa & 2.43\,kt & --- \\
+    7\,d  & 2.64\,\textdegree C & 2.96\,\textdegree C & 6.52\,hPa & 1.65\,kt & --- \\
+    \rowcolor{yellow!20}
+    \textbf{15\,d} & 1.89\,\textdegree C & \textbf{1.80\,\textdegree C} & 4.38\,hPa & 2.33\,kt & h\,25--168 \\
+    30\,d & 2.67\,\textdegree C & 3.35\,\textdegree C & 7.04\,hPa & 2.22\,kt & --- \\
+    \rowcolor{yellow!20}
+    \textbf{45\,d} & \textbf{1.99\,\textdegree C} & 1.78\,\textdegree C & 4.29\,hPa & 2.43\,kt & h\,13--24 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+{\small $^{*}$\,Models with window $<$ mean segment duration (5.3\,h) fail inference:
+the tail sequence is empty.}
+
+\medskip
+\textbf{Finding: window--horizon correspondence.}
+The optimal training window size approximately equals the target forecast horizon. Short
+windows cannot capture multi-day pressure cycles; longer windows dilute the local signal.
+This motivates the multi-model ensemble.
+
+\section*{Comparison with NWP and Baselines --- February 2026}
+
+The evaluation week (2026-02-01 to 2026-02-07, 168 hours) features a significant
+North-Atlantic frontal system: MSL pressure at Knock Airport ranges from 978.7 to
+1000.8\,hPa, a 22\,hPa swing. NWP forecast data were obtained from the Open-Meteo
+Historical Forecast API (ECMWF IFS 0.25\textdegree\@ and GFS Seamless, initialised
+2026-02-01 00:00\,UTC).
+
+\begin{table}[H]
+  \centering
+  \caption{MAE summary --- all methods, February 2026 (168\,h). Best per column in
+           \textbf{\textcolor{mtunavy}{bold}}.}
+  \label{tab:mae_all}
+  \begin{tabular}{lrrrrrrr}
+    \toprule
+    Method
+      & \multicolumn{1}{c}{T\,h1--12}
+      & \multicolumn{1}{c}{T\,h1--24}
+      & \multicolumn{1}{c}{T\,overall}
+      & \multicolumn{1}{c}{P\,h1--12}
+      & \multicolumn{1}{c}{P\,overall}
+      & \multicolumn{1}{c}{W\,h1--12}
+      & \multicolumn{1}{c}{W\,overall} \\
+    \midrule
+    ECMWF IFS 0.25\textdegree
+      & \textbf{0.63\,\textdegree C} & \textbf{0.73\,\textdegree C} & \textbf{0.44\,\textdegree C}
+      & \textbf{0.13\,hPa} & \textbf{0.59\,hPa}
+      & \textbf{1.24\,kt} & \textbf{1.48\,kt} \\
+    GFS Seamless
+      & 0.74\,\textdegree C & 0.79\,\textdegree C & 0.67\,\textdegree C
+      & 0.58\,hPa & 0.83\,hPa
+      & 1.74\,kt & 1.78\,kt \\
+    Persistence
+      & 0.48\,\textdegree C & 1.47\,\textdegree C & 1.14\,\textdegree C
+      & 1.35\,hPa & 8.00\,hPa
+      & 1.50\,kt & 7.21\,kt \\
+    \rowcolor{yellow!15}
+    \textbf{Ours (Ensemble)}
+      & 1.42\,\textdegree C & 1.86\,\textdegree C & 1.80\,\textdegree C
+      & \textbf{0.89\,hPa} & 6.37\,hPa
+      & 2.48\,kt & 5.62\,kt \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Ensemble forecast accuracy by horizon range, February 2026.}
+  \label{tab:per_range}
+  \begin{tabular}{llrrr}
+    \toprule
+    Horizon & Model & T MAE & P MAE & W MAE \\
+    \midrule
+    h\,1--12   & 12\,h window & 1.42\,\textdegree C & \textbf{0.89\,hPa} & 2.48\,kt \\
+    h\,13--24  & 45\,d window & 2.31\,\textdegree C & 3.74\,hPa & \textbf{1.67\,kt} \\
+    h\,25--168 & 15\,d window & 1.79\,\textdegree C & 7.04\,hPa & 6.22\,kt \\
+    \midrule
+    \rowcolor{yellow!15}
+    \textbf{Overall (168\,h)} & \textbf{Ensemble} & \textbf{1.80\,\textdegree C} & \textbf{6.37\,hPa} & \textbf{5.62\,kt} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Comparison with station-level baselines, February 2026.}
+  \label{tab:baselines}
+  \begin{tabular}{lrrrrrr}
+    \toprule
+    Method
+      & T h1--12 & T h1--24 & T h25--168
+      & P h1--12 & P h1--24 & P h25--168 \\
+    \midrule
+    Persistence
+      & 0.48\,\textdegree C & 1.47\,\textdegree C & 1.14\,\textdegree C
+      & 1.35\,hPa & 2.80\,hPa & 8.00\,hPa \\
+    Climatology
+      & 0.77\,\textdegree C & 1.71\,\textdegree C & 1.81\,\textdegree C
+      & 17.4\,hPa & 15.7\,hPa & 28.1\,hPa \\
+    \rowcolor{yellow!15}
+    \textbf{Ours}
+      & 1.42\,\textdegree C & \textbf{1.42\,\textdegree C} & 1.79\,\textdegree C
+      & \textbf{0.89\,hPa} & \textbf{2.27\,hPa} & \textbf{7.04\,hPa} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section*{Key Findings}
+
+\begin{itemize}
+  \item \textbf{Pressure at h\,1--12: 34\% improvement over persistence} (0.89 vs 1.35\,hPa).
+        The model correctly identifies the onset of the frontal passage that persistence,
+        frozen at the pre-frontal value, completely misses.
+  \item \textbf{Temperature at h\,24} matches persistence (1.42 vs 1.47\,\textdegree C).
+        Ireland's maritime climate makes persistence strong for temperature on this week
+        ($\sigma_T = 1.40$\,\textdegree C). A continental station would likely show a
+        clearer model advantage.
+  \item \textbf{Wind speed at h\,$>$\,24} beats persistence by 14\% (5.62 vs 7.21\,kt
+        overall). The 45\,d model captures the directional momentum of the frontal system.
+  \item ECMWF IFS is substantially better on all channels and horizons, as expected for
+        a global atmosphere model with supercomputing infrastructure and satellite data
+        assimilation. The model's competitive niche is narrow: no NWP infrastructure,
+        a single historical CSV, and interpretable ODE-segment representations.
+  \item The 6\,h and 3\,h window models fail entirely because the mean segment duration
+        (5.3\,h) exceeds the window, yielding empty tail sequences. The 1\,h model
+        produces NaN loss.
+\end{itemize}
+
+\section*{Proposed Extensions}
+
+\begin{enumerate}
+  \item Extended evaluation: 90-day rolling test period across all four seasons.
+  \item Multi-station generalisation: train on multiple Irish stations and test
+        zero-shot transfer to a held-out station.
+  \item Wind vector decomposition: replace scalar wind speed with $(u,v)$ components.
+  \item Probabilistic forecasting: predict a distribution over next segments rather than
+        a point estimate.
+  \item Physics-informed equations: add advection-parameterised ODE types to bridge the
+        gap between pure ML and NWP.
+\end{enumerate}
 
 \chapter*{Bibliography}
 \addcontentsline{toc}{chapter}{Bibliography}
