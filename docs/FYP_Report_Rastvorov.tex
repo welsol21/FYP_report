@@ -760,18 +760,36 @@ The next step was to parametrize blueprints with named placeholders. Instead of 
 \paragraph{Phase 4: Grammar books as the source of patterns.}
 The diagnostic finding, documented explicitly in the template expansion strategy report for v16, was that \emph{the main bottleneck is insufficient template granularity}. The solution was to stop authoring templates manually and instead extract them from existing pedagogical sources. Specialized grammar handbooks---Collins COBUILD English Grammar, George Yule's \emph{Explaining English Grammar}, Betty Azar's \emph{Basic English Grammar}, Mark Lester's \emph{English Grammar Drills}, Farlex \emph{Complete English Grammar Rules}, and others---contain thousands of author-written explanations, each paired with a curated example sentence. These are exactly the slot templates the project needed: validated by domain experts, covering a wide range of constructions, and already matched to example sentences that could drive the contract extraction step. A book extraction engine was built to parse EPUB, PDF, and DJVU formats and output the same notation--content pair format used throughout the pipeline.
 
-\paragraph{The resulting design.}
-Once grammar books became the primary pattern source, the pipeline acquired the following properties. Every template originates from a human expert; the model is never asked to invent explanations. Template diversity is bounded by the breadth of the source library rather than by the engineering team's time. The corpus projection step can expand a book-sourced template to thousands of new sentences while preserving its author-validated wording. And the ``closed'' character is not a restriction but a consequence: because all patterns come from books, all generated notes are traceable to a specific source, author, and pedagogical context.
+\paragraph{The resulting architecture and field ownership.}
+The canonical process for book-to-dataset-to-inference, documented explicitly on 2026-03-21, fixes the full flow in ten steps. The first six steps produce the training dataset; the last four describe what happens at inference time for a new sentence.
 
-A deliberate three-tier design governs how note templates are treated at different CEFR levels:
+\textit{Training path (steps 1--6).} A grammar book provides pairs of \emph{notation} (the author's pedagogical explanation) and \emph{content} (the example sentence). The content is parsed by spaCy into a linguistic contract tree. The notation is analysed and converted into a \emph{template}: the same explanation text, but with content-specific terms replaced by named placeholders such as \texttt{\{\{HEAD\_NOUN\}\}} or \texttt{\{\{PREPOSITION\}\}}. Crucially, placeholders may reference only attributes that exist in the contract built from the paired content---the contract is the sole source of allowed slot values. Each book pair then becomes one T5 training row: the input is the contract context together with the template structure; the \emph{target is the template text with placeholders intact}, not the rendered final note.
+
+\textit{Inference path (steps 7--10).} When a new sentence arrives from a user, it passes through the same spaCy parser, producing a contract with the same schema as the training contracts. The T5 model, trained on templated targets, outputs a notation template with placeholders. Those placeholders are then filled from the very same contract that was the model's input---the contract serves double duty as both the generation context and the slot-value source. The filled template is the rendered pedagogical note, which is saved back into the contract tree under \texttt{linguistic\_notes}.
+
+This symmetry---the contract is the context at training time, and the same contract schema provides the slot values at inference time---is the technical foundation of controlled note generation. The model never sees raw unbounded text as a target and never invents structure; it only realises wording for a template derived from and constrained by the contract.
+
+\paragraph{Field ownership.}
+The architecture formalises ownership of every contract field across three layers, as fixed in the field ownership document dated 2026-03-04:
 
 \begin{itemize}
-  \item \textbf{Elementary (A1--A2)}: fixed passthrough templates. Notes describe simple, unambiguous rules that do not depend on the specific surface content of the matched sentence. They serve as a \emph{lower-bound baseline} in evaluation.
-  \item \textbf{Intermediate (B1--B2)}: slot-templated generation. This is the primary generation task, where the same abstract pattern produces a different, grounded note for each matched sentence via slot filling from the contract.
-  \item \textbf{Advanced (C1--C2)}: fixed passthrough templates. Notes describe complex, construction-level rules that are likewise invariant to surface content, acting as an \emph{upper-bound comparison baseline}.
+  \item \textbf{spaCy and deterministic rules} own all structural fields: the tree shape, node types, part of speech, dependency labels, morphology, TAM fields (tense, aspect, mood, voice, finiteness), grammar classes, and note blueprints. These fields are set once and cannot be modified by any downstream model.
+  \item \textbf{Tabular ML (XGBoost)} owns \texttt{cefr\_level}. This is the only field produced by a trained classifier in the production path. It is treated as a prediction, not as structural truth, and is never overwritten by the note generation step.
+  \item \textbf{T5} owns only \texttt{linguistic\_notes}---the user-facing wording. It receives the blueprint text (derived from grammar classes) and the contract context as input; it may only produce note text. It is explicitly forbidden from changing any classifier-owned or structure-owned field.
 \end{itemize}
 
-By treating the boundary tiers as fixed, the project creates two natural comparison groups against which the quality and diversity of intermediate-level generation can be assessed. Concrete examples from the actual training data are provided in Appendix~\ref{app:pipeline-examples}.
+This ownership matrix is the reason the system is called \emph{contract-safe}: the contract is not a free-form generation output but a structured record whose fields are owned by specific, accountable sources.
+
+\paragraph{Three-tier CEFR note design.}
+A deliberate three-tier design governs how note templates are treated at different proficiency levels:
+
+\begin{itemize}
+  \item \textbf{Elementary (A1--A2)}: fixed passthrough templates. Notes describe simple, unambiguous rules that do not vary with the surface content of the matched sentence. They serve as a lower-bound baseline in evaluation.
+  \item \textbf{Intermediate (B1--B2)}: slot-templated generation. This is the primary generation task, where the same abstract pattern produces a different, grounded note for each matched sentence via contract-driven slot filling.
+  \item \textbf{Advanced (C1--C2)}: fixed passthrough templates. Notes describe complex, construction-level rules that are likewise invariant to surface content, acting as an upper-bound comparison baseline.
+\end{itemize}
+
+By treating the boundary tiers as fixed, the project creates two natural comparison groups that bracket the range achievable by the generation system. Concrete examples from the actual training data are provided in Appendix~\ref{app:pipeline-examples}.
 
 \chapter{Evaluation}
 \section{Evaluation Approach}
