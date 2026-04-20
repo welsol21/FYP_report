@@ -748,19 +748,19 @@ The dataset story also shows a cost of rigor. As examples become deduplicated, n
 \label{sec:closed-pipeline}
 The dataset construction strategy reached its current form through several distinct phases, each motivated by a concrete limitation discovered in the previous one. Understanding this evolution is important because the final ``closed'' architecture is not an initial design choice but the result of iterative problem-solving.
 
-\paragraph{Phase 1: Raw corpora and free-form generation.}
+\subsection*{Phase 1: Raw Corpora and Free-Form Generation}
 The earliest dataset version ingested open-licence corpora---UD English Web Treebank, OANC, Tatoeba, and Wikinews---producing around 3,000 sentences and their parsed representations. T5 was trained to output a free-form pedagogical note given a spaCy contract describing the sentence. Notes were unconstrained: the model could write anything. The variability of output appeared high, but inspection revealed that the model quickly converged on a small set of generic phrasings that were technically grammatical but offered little pedagogical value.
 
-\paragraph{Phase 2: Grammar blueprints.}
+\subsection*{Phase 2: Grammar Blueprints}
 To stabilize output quality, the project introduced a library of over 150 \emph{grammar blueprints}---hand-written, rule-based note templates keyed to specific grammatical classes such as \texttt{present\_simple\_affirmative}, \texttt{relative\_clause}, or \texttt{passive\_voice}. Each blueprint provided a fixed note at three CEFR tiers (elementary, intermediate, advanced). Blueprints served as a deterministic fallback when model output failed quality gates. The approach improved consistency, but the inverse problem now became clear: the blueprint library itself was too coarse. The same note appeared thousands of times in the projected corpus, and the model had no incentive to learn anything except which blueprint to select.
 
-\paragraph{Phase 3: Slot-based templates.}
+\subsection*{Phase 3: Slot-Based Templates}
 The next step was to parametrize blueprints with named placeholders. Instead of a fixed string, a note template could contain \texttt{\{\{HEAD\_NOUN\}\}}, \texttt{\{\{PREPOSITION\}\}}, \texttt{\{\{OBJECT\_NP\}\}}, or \texttt{\{\{RELATIVE\_MARKER\}\}}---fields resolved at projection time from the linguistic contract of the matched instance. This made each template potentially produce a distinct note for every sentence it matched. The technical infrastructure for this---slot validation, contract-to-slot resolution, template registry---was introduced in March 2026 and is described in more detail in the Placeholder Construction section above. The placeholder system worked, but exposed a new bottleneck: the repository contained only a few dozen manually authored template variants. Corpus projection amplified those templates across many sentences, but the underlying pattern space remained narrow.
 
-\paragraph{Phase 4: Grammar books as the source of patterns.}
+\subsection*{Phase 4: Grammar Books as the Source of Patterns}
 The diagnostic finding, documented explicitly in the template expansion strategy report for v16, was that \emph{the main bottleneck is insufficient template granularity}. The solution was to stop authoring templates manually and instead extract them from existing pedagogical sources. Specialized grammar handbooks---Collins COBUILD English Grammar, George Yule's \emph{Explaining English Grammar}, Betty Azar's \emph{Basic English Grammar}, Mark Lester's \emph{English Grammar Drills}, Farlex \emph{Complete English Grammar Rules}, and others---contain thousands of author-written explanations, each paired with a curated example sentence. These are exactly the slot templates the project needed: validated by domain experts, covering a wide range of constructions, and already matched to example sentences that could drive the contract extraction step. A book extraction engine was built to parse EPUB, PDF, and DJVU formats and output the same notation--content pair format used throughout the pipeline.
 
-\paragraph{The resulting architecture and field ownership.}
+\subsection*{Canonical Training and Inference Flow}
 The canonical process for book-to-dataset-to-inference, documented explicitly on 2026-03-21, fixes the full flow in ten steps. The first six steps produce the training dataset; the last four describe what happens at inference time for a new sentence.
 
 \textit{Training path (steps 1--6).} A grammar book provides pairs of \emph{notation} (the author's pedagogical explanation) and \emph{content} (the example sentence). The content is parsed by spaCy into a linguistic contract tree. The notation is analysed and converted into a \emph{template}: the same explanation text, but with content-specific terms replaced by named placeholders such as \texttt{\{\{HEAD\_NOUN\}\}} or \texttt{\{\{PREPOSITION\}\}}. Crucially, placeholders may reference only attributes that exist in the contract built from the paired content---the contract is the sole source of allowed slot values. Each book pair then becomes one T5 training row: the input is the contract context together with the template structure; the \emph{target is the template text with placeholders intact}, not the rendered final note.
@@ -769,7 +769,7 @@ The canonical process for book-to-dataset-to-inference, documented explicitly on
 
 This symmetry---the contract is the context at training time, and the same contract schema provides the slot values at inference time---is the technical foundation of controlled note generation. The model never sees raw unbounded text as a target and never invents structure; it only realises wording for a template derived from and constrained by the contract.
 
-\paragraph{Field ownership.}
+\subsection*{Field Ownership}
 The architecture formalises ownership of every contract field across three layers, as fixed in the field ownership document dated 2026-03-04:
 
 \begin{itemize}
@@ -780,7 +780,7 @@ The architecture formalises ownership of every contract field across three layer
 
 This ownership matrix is the reason the system is called \emph{contract-safe}: the contract is not a free-form generation output but a structured record whose fields are owned by specific, accountable sources.
 
-\paragraph{Three-tier CEFR note design.}
+\subsection*{Three-Tier CEFR Note Design}
 A deliberate three-tier design governs how note templates are treated at different proficiency levels:
 
 \begin{itemize}
