@@ -1,0 +1,107 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+\title{\textbf{Related Work: CEFR-Graded Grammar Generation and\\Pedagogical NLP Systems}\\[0.5em]
+\large Candidate References for a Co-Authored Journal Article}
+\author{Vladyslav Rastvorov\\
+Munster Technological University Cork\\
+\texttt{componentcheap@gmail.com}}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose of This Report}
+
+This document summarises three recent papers from the ACL/BEA computational linguistics community (2024--2025) that are directly relevant to a planned co-authored journal article extending the ELA (English Language Assistant) research project. The papers were identified through a search of the ACL Anthology in the areas of CEFR-graded language generation, pedagogical grammar control, and LLM alignment for language tutoring.
+
+Each entry below gives: full citation, a concise summary of the method and findings, and a brief statement of relevance to the ELA project.
+
+\bigskip
+\hrule
+\bigskip
+
+\section{Glandorf \& Meurers (BEA 2024)}
+
+\textbf{Full reference:}\\
+D.~Glandorf and D.~Meurers, ``Towards Fine-Grained Pedagogical Control over English Grammar Complexity in Educational Text Generation,'' in \textit{Proceedings of the 19th Workshop on Innovative Use of NLP for Building Educational Applications (BEA~2024)}, Association for Computational Linguistics, 2024.\\
+\url{https://aclanthology.org/2024.bea-1.24}
+
+\textbf{Summary.}
+The authors investigate whether large language models can generate reading texts whose grammatical complexity is reliably controlled at the CEFR level. The approach uses the English Grammar Profile as its taxonomy of grammar constructions, maps those constructions to proficiency tiers (A1--C2), prompts GPT-3.5 and GPT-4 with few-shot examples to generate positive and negative instances of each construction, and trains BERT-based detectors on the resulting million-example synthetic dataset. The detectors are then applied at generation time to verify that Mistral's output contains grammar characteristic of the target CEFR level. The paper reports that their method significantly increases the proportion of target-level grammar constructions in generated texts, outperforming direct GPT-4 prompting as a baseline.
+
+\textbf{Relevance to ELA.}
+ELA addresses the complementary problem: rather than generating reading texts at a target CEFR level, ELA generates \emph{pedagogical explanations} grounded in the grammatical structure of an existing sentence. Both projects depend on a structured inventory of grammar constructions mapped to CEFR tiers, and both rely on a separation between structural identification and textual realization. The gap ELA fills that this paper does not is the use of a \emph{closed, author-validated} source corpus (pedagogical handbooks) rather than synthetically generated data, which preserves the authenticity and accuracy of the grammatical notes.
+
+\bigskip
+\hrule
+\bigskip
+
+\section{Almasi \& Kristensen-McLachlan (BEA 2025)}
+
+\textbf{Full reference:}\\
+M.~Almasi and R.~D.~Kristensen-McLachlan, ``Alignment Drift in CEFR-Prompted LLMs for Interactive Spanish Tutoring,'' in \textit{Proceedings of the 20th Workshop on Innovative Use of NLP for Building Educational Applications (BEA~2025)}, Association for Computational Linguistics, 2025.\\
+\url{https://aclanthology.org/2025.bea-1.6}
+
+\textbf{Summary.}
+This paper studies a phenomenon the authors call \emph{alignment drift}: when an LLM is constrained by a CEFR-level system prompt at the start of a dialogue, it progressively loses adherence to that constraint as the conversation grows longer. The authors simulate teacher--student dialogues in Spanish using open-source instruction-tuned models (7B--12B parameters) at three proficiency levels (A1, B1, C1). They measure the readability and lexical complexity of the tutor's output across dialogue turns and show that all models drift toward their unconstrained default style within a relatively small number of turns. The conclusion is that prompting alone is insufficient for sustained proficiency alignment in multi-turn educational contexts.
+
+\textbf{Relevance to ELA.}
+The alignment drift finding provides direct motivation for the ELA architectural decision to avoid prompt-based generation control entirely. In ELA, CEFR alignment is enforced not through prompting but through the \emph{linguistic contract}: a validated, classifier-owned data structure that constrains which note templates are eligible for a given input. Because the contract is rebuilt deterministically for each new sentence and its CEFR field is classifier-owned rather than model-generated, there is no mechanism by which successive interactions can drift away from the intended proficiency level. This paper therefore supports the ELA design as a principled alternative to prompt-based alignment strategies.
+
+\bigskip
+\hrule
+\bigskip
+
+\section{Ribeiro-Flucht, Chen \& Meurers (BEA 2025)}
+
+\textbf{Full reference:}\\
+L.~Ribeiro-Flucht, X.~Chen, and D.~Meurers, ``A Framework for Proficiency-Aligned Grammar Practice in LLM-Based Dialogue Systems,'' in \textit{Proceedings of the 20th Workshop on Innovative Use of NLP for Building Educational Applications (BEA~2025)}, Association for Computational Linguistics, 2025.\\
+\url{https://aclanthology.org/2025.bea-1.74}
+
+\textbf{Summary.}
+The authors propose a structured framework that integrates LLMs into a goal-oriented dialogue system for grammar practice. The key insight is that LLMs are not inherently aligned with pedagogical goals or CEFR proficiency levels, and therefore need to be embedded in a framework that constrains what grammar structures are practiced and how. The framework builds on an existing dialogue scaffolding architecture and uses explicit grammar targets (drawn from CEFR-linked taxonomies) to guide conversation turns. The paper evaluates the framework's ability to elicit target grammar structures from the learner at proficiency levels up to and including B1.
+
+\textbf{Relevance to ELA.}
+This work and ELA share the same core premise: LLM output must be \emph{structurally constrained} rather than freely prompted if it is to serve pedagogical goals reliably. The difference in scope is that this paper focuses on learner production (eliciting grammar from the learner through dialogue), whereas ELA focuses on input processing (generating grammar explanations grounded in content the learner is reading or listening to). Together the two approaches describe a full learning cycle: comprehension-oriented grammar annotation (ELA) and production-oriented grammar practice (this paper). This complementarity could be a useful framing point in the planned journal article.
+
+\bigskip
+\hrule
+\bigskip
+
+\section*{Summary Table}
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{p{3.8cm}p{1.8cm}p{2.4cm}X}
+    \toprule
+    \textbf{Paper} & \textbf{Venue} & \textbf{Primary focus} & \textbf{Key relevance to ELA} \\
+    \midrule
+    Glandorf \& Meurers & BEA 2024 & Grammar-controlled text generation (reading) & Establishes the CEFR grammar taxonomy as a shared technical substrate; contrasts synthetic-data vs.\ closed-source approach \\
+    \midrule
+    Almasi \& Kristensen-McLachlan & BEA 2025 & CEFR alignment drift in LLM tutoring & Empirically motivates contract-based alignment over prompting \\
+    \midrule
+    Ribeiro-Flucht et al. & BEA 2025 & Proficiency-aligned grammar practice via dialogue & Complements ELA's input-processing scope with a production-practice scope; shared architectural principle of structural constraint \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section*{Note on Venue}
+
+All three papers were published at the Workshop on Innovative Use of NLP for Building Educational Applications (BEA), which is co-located with ACL or NAACL and is the primary computational linguistics venue for work at the intersection of NLP and language education. A journal article extending the ELA project would be a strong fit for either BEA proceedings, \textit{Transactions of the Association for Computational Linguistics} (TACL), or \textit{Computer Assisted Language Learning} (CALL).
+
+\end{document}
