@@ -361,7 +361,9 @@ Best treated as directions for further development:
 
 \chapter{The RLE Data Model}
 \section{Design Rationale}
-Recursive Linguistic Elements (RLE) form the central model of data representation in ELA and, in practice, serve as its main working contract. The purpose of RLE is to translate the results of automatic linguistic analysis and all subsequent stages of interpretation into a single structured form. This form must satisfy several requirements at once: it must be stable enough for storage and validation, expressive enough for machine processing, and at the same time clear enough to be used in user-facing visualization and pedagogical interpretation.
+The RLE contract forms the structural foundation of the entire ELA system. Its purpose is to represent an English sentence not as a flat string of text, but as a recursive hierarchy of interconnected element-nodes organized at the levels of sentence, phrase, and word. Each such node stores not only its textual content, but also a set of abstract linguistic characteristics, including node type, syntactic role, morphological and grammatical features, links to other nodes, and additional layers of interpretation such as CEFR, translation, pedagogical notes, and other enrichments.
+
+It is precisely this structure that makes RLE both a working contract for the internal components of the system and a convenient form of representation for further processing. It makes it possible to connect parser-based analysis, rule-based interpretation, classifier and generation components, runtime services, and user-facing visualization within one coherent model. In this way, RLE is needed not only for data storage, but also to ensure that the same structural form can be used for analysis, validation, machine processing, visual rendering, and pedagogical interpretation.
 
 \section{Hierarchy}
 The implemented hierarchy uses three conceptual layers:
