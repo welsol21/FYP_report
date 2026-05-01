@@ -542,13 +542,10 @@ At the same time, an architectural shift was also taking place. The earlier logi
 If these steps are viewed together, they lead not merely to a local technical observation, but to a more general research conclusion. At first, the project was confronted with many concrete sentences, notes, and variants of their realization. It then became clear that neither simply accumulating these variants nor merely compressing them solved the problem. A workable result appeared only when the system began to isolate more stable patterns within this variety and rely on them for later classification, interpretation, and controlled generation. In other words, the path of the project gradually showed that useful generalization arises not from enumerating surface cases, but from discovering the more abstract structure that organizes those cases.
 
 \section{Interpretive Framework}
-We interpret that behaviour through a context--pattern duality:
-\begin{itemize}
-  \item during training, many contextual examples shape the internal pattern space of the model;
-  \item during inference, the now-frozen patterns interpret new contextual instances.
-\end{itemize}
 
-In simple terms, context forms pattern in the open training phase, while pattern forms context in the closed inference phase. This is not presented here as a formal theorem. It is an empirical observation arising from the project's modelling path and used as an explanatory framework for why placeholder abstraction improved generalization.
+The results obtained in the project can be interpreted through the following framework. During training, the system is exposed to a large number of concrete examples, and it is from this variety that more stable patterns are gradually extracted. During inference, the process in a sense runs in the opposite direction: the patterns that have already been formed begin to serve as the basis for interpreting new cases. In other words, during training many contexts lead to the formation of pattern, whereas during application of the model it is the pattern that helps recognize and organize new context.
+
+An important point is that this scheme is not proposed as a strict formal theory. In the present thesis, it is used as an empirical explanatory framework that emerged from the path of the project itself. It provides the clearest way to describe what the experiments showed: improvement appeared when the system depended less on individual surface cases and relied more on the more stable structural organization of the data. In this sense, context--pattern duality is not offered as an independent proof, but as a way of bringing together into one interpretation the observations obtained in the note-selection, CEFR, and placeholder-based experiments.
 
 \section{Lexical Invariance}
 The key idea behind the placeholder strategy is lexical invariance. If the model learns to associate structural markers with pedagogical interpretation, then the same pattern can be reused when the surrounding words change. This is especially valuable in language learning, where the educational meaning of a structure often outlives any single example sentence.
