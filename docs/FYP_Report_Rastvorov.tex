@@ -920,6 +920,18 @@ A deliberate three-tier design governs how note templates are treated at differe
 
 By treating the boundary tiers as fixed, the project creates two natural comparison groups that bracket the range achievable by the generation system. Concrete examples from the actual training data are provided in Appendix~\ref{app:pipeline-examples}.
 
+\section{Engineering Trade-off}
+During the work, it became clear that strict dataset cleaning inevitably reduces the amount of material that remains usable for training and evaluation. The raw corpus-based and book-based layers produced thousands and tens of thousands of rows, but after removing repetition, weak formulations, poorly distinguishable explanations, and noisy examples, the working datasets became much smaller. In the final experiments, I was no longer working with the full accumulated mass of material, but with narrower datasets of \texttt{3875} and \texttt{5016} rows.
+
+This was not the result of an abstract principle adopted in advance. It was the conclusion forced by the intermediate results themselves. As the work progressed, it became clear that simply increasing the number of rows did not improve the system if the new examples mostly repeated explanations that were already present or pushed the model toward a small number of overly frequent answers. In other words, a large dataset did not help by itself if it contained too much repetition and too little genuinely new material.
+
+At the same time, the work still produced several important results. First, a richer structural description of the sentence proved more useful than a shallower input: the system selected the needed explanation more accurately when it saw not only the general shape of the sentence, but also its internal grammatical structure. Second, templated explanations were useful not because they immediately produced the best absolute scores, but because they made the explanation space more ordered and less chaotic. Third, the shift from free text generation to the selection of an explanation type was itself useful. It made the system much easier to evaluate: it became possible to see which explanation it selected, which alternatives it confused, and where its errors began to concentrate.
+
+The limits of these findings are also clear. I can claim that a more structural input helps, that explanation selection as a separate task works, and that the move toward templates was justified. But I cannot yet claim that the current explanation inventory is already broad enough to cover a wide range of grammatical cases reliably. This is especially true for smaller units inside the sentence, where the examples are less stable and less repeatable. In the same way, I cannot yet say with confidence how the system will behave if the number of different explanations becomes much larger: even in the current experiments, increasing the number of alternatives already changed the quality noticeably.
+
+That is the engineering trade-off at this stage. Stricter filtering produced cleaner and more honest results, but at the same time reduced the amount of material on which those results were obtained. For that reason, the work already allows confident conclusions about the direction of the approach, but it does not yet justify treating this part of the system as fully complete.
+
+
 \chapter{Evaluation}
 \section{Evaluation Approach}
 The evaluation of ELA must be understood as layered rather than singular. No single metric validates the entire system. Instead, different subsystems require different forms of evidence:
