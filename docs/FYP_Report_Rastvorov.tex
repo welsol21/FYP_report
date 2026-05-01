@@ -711,18 +711,14 @@ The frontend is implemented as a React/Vite progressive web application. It orga
 The frontend development note is particularly useful because it records the practical scope of what was actually implemented. It confirms a project-first flow of `Projects -> Files -> Analyze', project-scoped file registration, stage progress reporting, artifact download actions, sentence-by-sentence visualizer navigation, translation-provider handling, quick node edit controls, and vocabulary export. It also records an important architectural subtraction: backend media-job UI controls were removed after the client-first runtime decision. That kind of removal is as important as any added feature because it shows that the final architecture was shaped by narrowing responsibilities, not only by accumulating them.
 
 \section{PWA and End-to-End Workflow Evidence}
-The repository also contains a dedicated PWA integration-test guide intended for pre-deployment verification. That document is useful because it describes the system not as isolated modules but as an end-to-end learner workflow:
-\begin{enumerate}
-  \item open the application;
-  \item register service-worker readiness;
-  \item create a project;
-  \item upload a real media file;
-  \item open the analysis screen;
-  \item run the full pipeline from transcription through rendering;
-  \item verify the appearance of generated downloadable artifacts.
-\end{enumerate}
 
-This is important evidence for the thesis because it shows that the project explicitly tests real browser behaviour and long-running media paths, not only narrow unit-level logic. The same test guide also captures several resolved operational problems, such as model-installation readiness, Vite proxy configuration, service-worker cache staleness, and the move away from FFmpeg drawtext rendering toward a Canvas-based video rendering path. It therefore functions as both a verification checklist and a compact record of implementation lessons learned under real end-to-end conditions.
+In the present work, the PWA (Progressive Web Application) is a web application that the user opens in a browser but can also install on their device in much the same way as an ordinary application. For this reason, it combines the properties of a web interface with those of a more persistent application environment: it preserves local state, uses browser background mechanisms for more stable operation, and supports a more coherent mode of interaction with the system. In the context of ELA, this PWA should therefore be seen not simply as an interface placed on top of separate backend functions, but as the real user environment in which the main capabilities of the system are expected to work together.
+
+It is through the PWA that the user creates a project, uploads files, launches analysis, receives processing results, obtains learning artefacts such as transcripts, translations, subtitles, and other derived materials, and interacts with the visualizer. For this reason, verification of this part of the system is especially important for the thesis: it shows whether linguistic analysis, multimodal processing, runtime logic, and the user workflow were actually brought together into one working system.
+
+To verify the PWA, a dedicated integration scenario was used during the work, covering the full user path: opening the application, checking the readiness of the built-in browser mechanisms, creating a project, uploading a real media file, opening the analysis screen, running the pipeline from transcription through rendering, and obtaining the final artefacts. This is important because such testing moves evaluation beyond isolated functions and shows how the system behaves under real browser-based end-to-end conditions.
+
+It is equally important that work on the PWA exposed a number of practical engineering problems that could not have been seen at the level of isolated modules: the readiness of locally used models, the correct connection between the user interface and the backend service, problems caused by outdated cached versions of the application in the browser, and the need to replace one method of drawing text onto video with another that proved more stable for the real user scenario. In this sense, the PWA turned out to be not only the user-facing shell of the project, but also the environment in which the real integration maturity of the whole system was tested.
 
 \section{Media Processing}
 The media path extends ELA beyond text. Audio and video flow through extraction, transcription, sentence preparation, optional translation, and artifact rendering. The runtime also includes subtitle generation and media export paths, making ELA a multimodal learning system rather than a text-only analysis tool.
