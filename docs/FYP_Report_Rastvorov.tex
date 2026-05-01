@@ -410,36 +410,68 @@ It is especially important that the recursive nature of the RLE contract was not
 In this way, the practical evolution of the RLE contract reflects the general logic of ELA's development as a whole. At first, the contract was needed as a way of fixing the result of analysis; later, it became a means of coordinating different components of the system; and in its current state, it has become the central working interface through which analysis, validation, enrichment, generation, and user-facing presentation of the result all pass. In this sense, the history of the RLE contract is not a separate technical line, but one of the main axes along which the entire project developed.
 
 \section{Contract Example}
-Listing~\ref{lst:rleexample} shows a simplified example of a sentence-level RLE node.
+Listing~\ref{lst:rleexample} presents a shortened but current example of a sentence-level RLE contract node. It does not show every possible field, but only the main groups of data that in the current system connect the structural analysis of the sentence, grammatical interpretation, pedagogical notes, and learner-facing enrichments.
 
-\begin{lstlisting}[style=jsonstyle,caption={Simplified RLE contract example},label={lst:rleexample}]
+\begin{lstlisting}[style=jsonstyle,caption={Current sentence-level RLE contract example},label={lst:rleexample}]
 {
-  "type": "Sentence",
-  "content": "She should have trusted her instincts.",
-  "schema_version": "v2",
-  "node_id": "s1",
-  "parent_id": null,
-  "source_span": { "start": 0, "end": 39 },
-  "part_of_speech": "sentence",
-  "grammatical_role": "root",
-  "tense": null,
-  "aspect": "perfect",
-  "mood": "modal",
-  "voice": "active",
-  "finiteness": "finite",
-  "translations": {
+  "type": "Sentence",                         // node type: root sentence node
+  "content": "She came to him towards morning.", // textual content of the node
+  "tense": "past",                           // tense
+  "aspect": "simple",                        // aspect
+  "mood": "indicative",                      // mood
+  "voice": "active",                         // voice
+  "finiteness": "finite",                    // finiteness
+  "tam_construction": "past_simple",         // generalized TAM construction
+
+  "linguistic_notes": [                        // learner-facing pedagogical note
+    "Explain past simple verb form and completed past-time meaning."
+  ],
+
+  "schema_version": "v2",                    // contract version
+  "part_of_speech": "sentence",              // grammatical category of the node
+  "node_id": "n1",                           // unique node identifier
+  "parent_id": null,                           // root node has no parent
+  "source_span": {                             // exact span in the source text
+    "start": 0,
+    "end": 31
+  },
+  "grammatical_role": "clause",              // grammatical role of the node
+
+  "translations": {                            // translations attached to the node
     "m2m100": {
       "source_lang": "en",
       "target_lang": "ru",
-      "text": "..."
+      "text": "Она пришла к нему под утро."
     }
   },
-  "linguistic_notes": {
-    "elementary": "...",
-    "intermediate": "...",
-    "advanced": "..."
+  "active_translation_provider": "m2m100",  // currently active translation provider
+
+  "phonetic": {                                // phonetic representation
+    "uk": "ʃi keɪm tə hɪm təˈwɔːdz ˈmɔːnɪŋ",
+    "us": "ʃi keɪm tə hɪm təˈwɔɹdz ˈmɔɹnɪŋ"
   },
-  "linguistic_elements": []
+
+  "synonyms": [],                              // lexical enrichment
+  "cefr_level": "A2",                        // CEFR difficulty estimate
+
+  "grammar_classes": [                         // grammatical classification of the node
+    {
+      "class_id": "past_simple_affirmative",
+      "confidence": 0.9
+    }
+  ],
+
+  "note_blueprints": {                         // classifier-owned note blueprints
+    "elementary_text": "Identify the past simple statement and the finished past action.",
+    "intermediate_text": "Explain past simple verb form and completed past-time meaning.",
+    "advanced_text": "Describe how the past simple places the event in a finished narrative timeline."
+  },
+
+  "note_generator_version": "controlled_t5::blueprint_rewrite", // note-generation path version
+
+  "linguistic_elements": [                     // child nodes in the recursive tree
+    { "...": "Phrase / Word child nodes omitted here for brevity" }
+  ]
 }
 \end{lstlisting}
 
