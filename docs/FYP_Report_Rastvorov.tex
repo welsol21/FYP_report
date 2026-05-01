@@ -941,16 +941,25 @@ For that reason, evaluation in the work was separated by layers. Structural corr
 That is why this chapter is organised not around one benchmark score, but around several different kinds of evidence. For \texttt{ELA}, it is not enough to report the accuracy of a single model, because that would not answer whether the system is actually interpreting sentence structure correctly, whether it chooses explanations at the appropriate level, whether it remains stable as the number of alternatives grows, or whether it still works outside an isolated laboratory example. In that sense, layered evaluation is not a matter of methodological ornament, but a direct consequence of the actual architecture of the system.
 
 \section{Evaluation Method}
-The thesis uses a mixed evidence strategy rather than a single benchmark suite. Evaluation evidence is drawn from:
+In this work, I used several different evaluation methods because different parts of \texttt{ELA} have to be tested in different ways.
+
+To evaluate sentence structure and internal data, I used checks of \texttt{RLE contract} correctness, field schema validity, and consistency of output structures. The purpose here was to determine whether the system was building its internal representation of the sentence correctly and whether that representation remained intact throughout processing.
+
+To evaluate the models, I used standard quality metrics on saved evaluation runs. This applied mainly to \texttt{CEFR} prediction, explanation-class selection, and comparisons between different system regimes. These results make it possible to judge whether a richer structural representation of the sentence is helpful, whether explanation selection works as a separate task, and whether the move toward templated explanations is justified.
+
+To evaluate generation quality and intermediate outputs, I used quality-control checks. Their role was not to produce one final score, but to show whether levels, fields, templates, and final notes remained valid after passing through the inference pipeline.
+
+To evaluate the engineering side of the system, I used unit tests and runtime-level checks. These were needed to confirm that the dataset builders, classifier pipeline, API, media processing, validation, and other parts of the system worked not only as separate ideas, but as executable code.
+
+In summary, the work used:
 \begin{itemize}
-  \item structured project documents describing architectural intent and pipeline evolution;
-  \item sample contract artifacts and schema definitions;
-  \item explicit evaluation JSON and report checkpoints;
-  \item broad unit-test coverage across classifier, runtime, media, contract, and validation layers;
-  \item targeted reproduction of failing tests in the current codebase to identify active regressions.
+  \item structural checks for the internal sentence representation;
+  \item model metrics for \texttt{CEFR} and explanation selection;
+  \item quality-control checks for inference outputs;
+  \item unit tests and runtime checks for the executable system.
 \end{itemize}
 
-This approach is appropriate for the current state of ELA because the project is simultaneously a research artifact, a software system, and a still-evolving product. A thesis that ignored any one of those layers would misrepresent the actual nature of the work.
+This separation was necessary for \texttt{ELA}, because a single metric would not have explained the system properly: it would not have shown separately the quality of the structure, the quality of explanation selection, or the operational state of the system as a whole.
 
 \section{What the Current Evidence Supports}
 The project contains substantial test infrastructure and multiple evaluation artifacts. This supports several defensible conclusions:
