@@ -934,14 +934,11 @@ That is the engineering trade-off at this stage. Stricter filtering produced cle
 
 \chapter{Evaluation}
 \section{Evaluation Approach}
-The evaluation of ELA must be understood as layered rather than singular. No single metric validates the entire system. Instead, different subsystems require different forms of evidence:
-\begin{itemize}
-  \item contract validity and structural correctness;
-  \item CEFR prediction quality;
-  \item pedagogical note generation quality;
-  \item media pipeline behaviour;
-  \item end-to-end runtime usability.
-\end{itemize}
+In this work, the evaluation of \texttt{ELA} could not be reduced to one overall metric, because the system is not a single model with one input type and one output type. It consists of several different layers, and an error at each layer means something different. If, for example, the \texttt{RLE contract} is built incorrectly, then later note selection already depends on a distorted representation of the sentence. If the contract is correct but the \texttt{CEFR} prediction is wrong, then the system may choose an explanation at the wrong difficulty level. If both the structure and the level are correct, but the verbal formulation works poorly, the user still receives a weak or badly phrased note. For this reason, a single final score would conceal rather than clarify the real properties of the system.
+
+For that reason, evaluation in the work was separated by layers. Structural correctness had to be checked separately: whether the system parses the sentence into nodes, relations, and grammatical features correctly, and whether the \texttt{RLE contract} remains internally coherent. \texttt{CEFR} prediction quality was also evaluated separately, because it directly affects the level of explanation selected by the system. The task of explanation selection and construction was treated as another separate layer: whether the system can choose an appropriate explanation type, whether it collapses into a few overly frequent answers, and whether a richer structural input gives an advantage over a shallower one. The \texttt{media pipeline} was evaluated separately as well, because for a working product it matters not only how the system analyses text, but also how it behaves when processing user audio, media limits, and related runtime scenarios. Finally, the behaviour of the full user-facing loop also had to be assessed separately, that is, whether the system remains coherent in real execution when the backend, frontend, API, and runtime logic operate together.
+
+That is why this chapter is organised not around one benchmark score, but around several different kinds of evidence. For \texttt{ELA}, it is not enough to report the accuracy of a single model, because that would not answer whether the system is actually interpreting sentence structure correctly, whether it chooses explanations at the appropriate level, whether it remains stable as the number of alternatives grows, or whether it still works outside an isolated laboratory example. In that sense, layered evaluation is not a matter of methodological ornament, but a direct consequence of the actual architecture of the system.
 
 \section{Evaluation Method}
 The thesis uses a mixed evidence strategy rather than a single benchmark suite. Evaluation evidence is drawn from:
