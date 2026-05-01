@@ -317,16 +317,9 @@ The novelty of the present thesis lies not only in the fact that the concept of 
 An important part of the novelty of the thesis is that this direction was not only formulated theoretically, but also subjected to experimental testing. The experiments carried out in the project showed that a richer structural input representation in the form of an RLE contract produces better results in pedagogical note selection than more superficial forms of sentence representation. In addition, the series of experiments with increasing numbers of unique note types showed that the structural organization of the notes themselves also affects model behaviour and its capacity for generalization. In this way, the present thesis contributes novelty not only as an engineering implementation of ELA, but also as a partial empirical confirmation that the grammatical structure of language can serve as a stable and learnable basis for pedagogical interpretation.
 
 \section{Methodological Approach of This Thesis}
-The work reported here follows a hybrid engineering-research methodology. It is not a purely theoretical study, nor is it a simple build diary. Instead, the thesis combines:
-\begin{itemize}
-  \item architectural analysis of the implemented codebase;
-  \item examination of project specifications, README-level documentation, and internal reports;
-  \item review of test coverage and targeted failing tests in the current codebase;
-  \item analysis of selected evaluation artifacts produced during model and pipeline development;
-  \item comparison with the earlier research thesis to isolate what is genuinely new in the final-year implementation phase.
-\end{itemize}
+The methodology of the present work was structured in the following way: first, a general approach was formulated for solving a particular project or research task, and then work within that approach proceeded iteratively. Each such cycle included the implementation of a component, pipeline, dataset, or experiment, the collection of feedback through tests, metrics, reports, and practical results, and then either the further improvement of the chosen solution, its partial revision, or its complete abandonment in favour of a new approach. In this way, the project did not develop according to a strictly linear scheme, but through recurring cycles of testing, correction, rollback, and reconstruction of solutions. It was in the course of this work that the research hypothesis itself emerged: namely, that the structural organization of language can serve as a stable and learnable basis for pedagogical interpretation.
 
-This methodological framing matters because ELA evolved over time. Different documents in the repository describe different moments of the project. The thesis therefore treats the repository as a historical engineering record rather than as a single perfectly synchronized artifact.
+This methodology was applied both to the engineering side of ELA and to the development of its research line. It was used in work on the RLE contract, dataset construction, the choice between generative and classifier-based approaches, CEFR inference, pedagogical notes, and the multimodal runtime pipeline. In some cases this process led to the gradual strengthening of the original solution, while in others it led to a change of architectural direction. For this reason, both the final form of the ELA system and the research conclusions of the thesis emerged not as the execution of a fully fixed plan, but as the result of sequential iterative work in which each next version was refined under the influence of the feedback received.
 
 \section{Project Risks}
 From the perspective of the final thesis, the main risks are not only technical but evidential:
