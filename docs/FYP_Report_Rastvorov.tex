@@ -511,7 +511,9 @@ From a practical point of view, this format also proved more convenient for seve
 
 \chapter{Context--Pattern Duality and Placeholder Generalisation}
 \section{Observed Problem}
-During the note-generation experiments, a recurring issue appeared: when the training material preserved too much lexical surface detail, the model tended to memorize examples rather than learning transferable pedagogical structure. This was especially problematic because ELA requires generalization to previously unseen vocabulary inside familiar grammatical patterns.
+During the development of ELA, one recurring problem became increasingly visible: the system performed worse when learning depended too heavily on specific words and on fixed textual formulations. In such cases, it was more likely to memorize individual examples than to learn how to recognize the same construction in new sentences. This is especially important for the present project because ELA is expected to work not only with phrases it has already seen, but also with new sentences in which the words may change while the grammatical construction remains the same.
+
+In practice, this problem became especially clear in the task of pedagogical notes. When an explanation was tied too closely to the literal form of a particular example, the system found it harder to apply that explanation to other sentences of the same type. In other words, the difficulty was that learning too easily attached itself to the surface form of the text and did not retain the structure of the construction strongly enough. This was the initial problem from which the later line of work on structural abstraction in ELA developed.
 
 \section{Observed Improvement}
 Performance improved after restructuring the target space around more abstract templates and placeholders. Instead of tying the generation task tightly to concrete lexical tokens, the revised setup emphasized structural roles and reusable pattern slots. The practical result was a stronger ability to produce pedagogical notes for unseen examples that shared grammatical structure with the training material.
