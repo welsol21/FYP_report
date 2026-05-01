@@ -814,16 +814,15 @@ The expansion of test coverage and the synchronisation of documentation with imp
 Stabilisation at this stage therefore did not mean declaring the system broadly ``ready.'' It meant narrowing the working scope more strictly to what had actually been made manageable. Because of the small number of unique \texttt{notation -> sentence} pairs and the even greater difficulty of constructing high-quality \texttt{notation -> phrase} and \texttt{notation -> word} pairs, the project had to rely on sentence-level note training as a compromise baseline that was limited but practically achievable. This decision reduced the breadth of the current note-generation layer, but at the same time made it more honest, more testable, and more suitable for further development.
 
 \section{Deduplication and Quality Control}
-A recurring theme in the project documentation is that raw volume is not enough. The system places substantial effort into:
-\begin{itemize}
-  \item filtering and capping repeated targets;
-  \item excluding low-quality or telemetry-like note text;
-  \item preserving CEFR balance and grammar-class coverage;
-  \item validating note suitability and trace fields;
-  \item reducing datasets to examples that remain useful after strict normalization.
-\end{itemize}
+During the work, it became clear that for ELA an increase in row count by itself did not guarantee high-quality training material. The main problem was that larger datasets quickly became saturated with repeated note targets, weak explanatory formulations, and structurally low-value variants that increased data volume without providing a comparable gain in training signal. For this reason, deduplication and quality control became not a secondary cleanup step after data collection, but one of the central mechanisms of the entire dataset-engineering process.
 
-The practical effect of this policy is visible in the processed dataset statistics. One hybrid T5 contract-target dataset built from the projected corpus started with 2,510 rows and ended with only 380 rows after deduplication and balancing, with 2,130 rows skipped by target-cap controls alone. This is a clear sign that the project prioritized controllable target diversity over raw size. It also explains why some intermediate model results remained weak: the engineering decision to compress and normalize the target space trades scale for discipline.
+In practice, this required several successive constraints. Repeated targets had to be filtered and capped so that the model would not overfit to a small number of high-frequency note formulations. At the same time, low-quality, noisy, or telemetry-like notes were excluded because they did not provide a full pedagogical explanation. After that, it was necessary to ensure that cleaning did not destroy CEFR balance or grammar-class coverage. In addition, note suitability and trace fields were checked, meaning that the dataset preserved not just any rows, but only those that could be reliably linked to their source, their contract structure, and their later template-oriented processing.
+
+The result of this policy was not a minimal dataset, but a stabilised working dataset layer in its latest form. For Experiment A, which tested whether a richer RLE representation improves note selection, the project used a contract-input raw-note dataset of \texttt{3875} rows after balancing, with \texttt{58} unique raw note targets. For Experiment B, which compared the dynamics of raw and templated notes, the project used a large mixed paired-template dataset of \texttt{5016} rows, containing \texttt{3545} templated targets and \texttt{1471} raw targets. These dataset sizes are documented in the repository report and dataset artifacts listed in the bibliography. They better represent the state to which the dataset layer had actually been brought after the major stages of cleaning, balancing, and rebuilding, rather than earlier noisier or more aggressively compressed intermediate variants.
+
+This matters because these figures show the real outcome of the compromise between scale and controllability. On the one hand, the project did not stop at very narrow experimental samples of only a few hundred rows. On the other hand, it did not try to preserve maximum size at any cost. Instead, the dataset layer was brought to a state in which several thousand rows could already function as a more disciplined and structurally controlled body of material: with repeated targets constrained, with clearer traceability, with raw and templated targets separated, and with a more interpretable distribution across the note space.
+
+For this reason, deduplication and quality control in the project should be understood not as cosmetic post-processing, but as a mechanism of structural discipline over the datasets. The goal was not simply to obtain as many rows as possible, but to obtain datasets in which scale no longer destroyed signal quality. The final working datasets of \texttt{3875} and \texttt{5016} rows should therefore be treated as the outcome of deliberate engineering selection rather than as a passive by-product of data accumulation.
 
 \section{Placeholder Construction}
 The note-generation path depends critically on converting enriched linguistic structures into more abstract templates. This is the point where dataset engineering and the context--pattern duality meet: the abstraction strategy is not only a training trick but part of how the project reframes the pedagogical signal.
@@ -1456,6 +1455,9 @@ The slot mechanism makes the difference across the three tiers concrete. Element
   \item P. Dutwin, \emph{English Grammar Demystified}. New York, NY: McGraw-Hill, 2010.
   \item S. Brehe, \emph{Brehe's Grammar Anatomy}. 2019.
   \item R. Thiessen, \emph{English Grammar for Academic Purposes}. 2025.
+  \item V. Rastvorov, \emph{ELA Note-ID Dynamics Report}. Repository report, 2026. Available: \url{https://github.com/welsol21/FYP_LLM/blob/main/docs/reports/ela_note_id_dynamics_report_2026-04-30.md}
+  \item V. Rastvorov, \emph{Contract-Input Raw-Note Dataset Stats}. Repository artifact, 2026. Available: \url{https://github.com/welsol21/FYP_LLM/blob/main/data/processed_sentence_seed/projection_external_sentence_contract_v2_note_first_balanced_exact5_cap104_v3/stats.json}
+  \item V. Rastvorov, \emph{Mixed Paired-Template Dataset Stats (v45)}. Repository artifact, 2026. Available: \url{https://github.com/welsol21/FYP_LLM/blob/main/data/processed_sentence_seed/seed_preserving_sentence_dataset_v45_paired_template_sentence_nodes_contractfix4_v1/stats.json}
 \end{enumerate}
 
 \end{document}
