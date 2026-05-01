@@ -322,15 +322,42 @@ The methodology of the present work was structured in the following way: first, 
 This methodology was applied both to the engineering side of ELA and to the development of its research line. It was used in work on the RLE contract, dataset construction, the choice between generative and classifier-based approaches, CEFR inference, pedagogical notes, and the multimodal runtime pipeline. In some cases this process led to the gradual strengthening of the original solution, while in others it led to a change of architectural direction. For this reason, both the final form of the ELA system and the research conclusions of the thesis emerged not as the execution of a fully fixed plan, but as the result of sequential iterative work in which each next version was refined under the influence of the feedback received.
 
 \section{Project Risks}
-From the perspective of the final thesis, the main risks are not only technical but evidential:
+For the present thesis, the main risks are not only ordinary engineering risks, but also risks connected with the interpretation of the project's results. Because ELA developed iteratively, and because its architecture, datasets, and model components changed over the course of the work, there is a risk of drawing conclusions that are too broad from intermediate states of the system. This applies both to the general description of ELA's capabilities and to the interpretation of particular experiments and metrics.
+
+In the work itself, such risks appeared in quite concrete ways. For example, at the earlier stages of the modelling line, the role of T5 was understood more broadly than in the final architecture of the project. Over time, the system moved toward a stricter separation of tasks: the selection of a pedagogical note came to belong primarily to the classification stage, while the generative model came to be used in a more limited way, mainly for the linguistic wording of an interpretation that had already been selected. Likewise, quantitative results cannot be interpreted outside the conditions in which they were obtained. Comparisons between direct text-based notes and templated notes with placeholders, between more superficial input and input in the form of an RLE contract, and between experiments with different numbers of unique note types all produced different kinds of model behaviour. This means that headline numerical results from different stages of the work cannot be compared without taking into account the specific experimental setup.
+
+Integration risks also appeared in observable practical form. In different parts of the project, repeated corrections were required in how the system split audio into sentences, how it synchronized subtitle text with the time structure of media, how it stored and reused already processed results, and how it coordinated state between the user interface, the runtime layer, and the multimodal pipeline. Finally, the scale of ELA itself creates a separate risk of uneven maturity: the system simultaneously includes structural linguistic analysis, CEFR, pedagogical notes, classifier-based and generative components, audio and video processing, visualization, and export. For this reason, by the time the work is completed, different subsystems are inevitably at different degrees of stabilization.
+
+Recognizing these risks matters not as a formal disclaimer, but as part of the research honesty of the thesis. For this reason, it is necessary to distinguish clearly between three groups of results.
+
+Already implemented and substantially stabilized:
 \begin{itemize}
-  \item \textbf{claim drift}: older project narratives may overstate capabilities that the current code does not fully stabilize;
-  \item \textbf{metric drift}: different evaluation checkpoints may produce different headline numbers;
-  \item \textbf{integration risk}: runtime, frontend, and pipeline layers evolve at different speeds, so stricter validation may expose mismatches;
-  \item \textbf{scope risk}: the system spans too many subsystems for every path to be equally mature at submission time.
+  \item the RLE contract as the main structural representation of the sentence;
+  \item the decomposition of material into sentence, phrase, and word levels;
+  \item the basic linguistic analysis combining parser-based processing and rule-based grammatical interpretation;
+  \item the contract-oriented runtime approach;
+  \item CEFR as an integrated layer of difficulty interpretation;
+  \item the general user-facing visualization layer;
+  \item the basic multimodal processing of text, audio, and video.
 \end{itemize}
 
-Recognizing these risks improves the quality of the report. It encourages careful wording, checkpoint-specific evidence, and explicit distinction between the implemented baseline, experimental path, and future direction.
+Still at the experimental stage:
+\begin{itemize}
+  \item the exact form of the input representation for pedagogical note selection;
+  \item the comparative role of direct text-based notes and templated notes with placeholders;
+  \item the classifier-first scheme for note selection;
+  \item the controlled use of T5 after classification;
+  \item the question of which forms of structural abstraction best support generalization.
+\end{itemize}
+
+Best treated as directions for further development:
+\begin{itemize}
+  \item the expansion of the space of pedagogical notes;
+  \item the construction of larger and cleaner datasets;
+  \item the further separation between the selection of interpretation and its later linguistic realization;
+  \item broader experimental testing of the hypothesis about structural patterns;
+  \item user studies of the pedagogical effectiveness of ELA.
+\end{itemize}
 
 \chapter{The RLE Data Model}
 \section{Design Rationale}
