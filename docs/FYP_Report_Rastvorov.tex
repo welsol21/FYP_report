@@ -866,17 +866,11 @@ Taken together, these three views produce an important picture. The dataset of \
 At the same time, these same figures also show the limitation of the current stage. Template space had become measurable, but not balanced. The dataset containing \texttt{42} sentence template types and only \texttt{6} phrase template types already makes clear that the sentence-level branch was substantially more developed than the phrase-level branch. Likewise, the split inside the \texttt{5016}-row final dataset into \texttt{3545} templated and \texttt{1471} raw targets shows that the templated regime had become the dominant branch, but had not displaced the raw-note layer completely. For this reason, measured template space in this work should be understood not as a completed map of templates, but as the first sufficiently strict quantitative form of a template space that the project had begun to treat as a separate object of analysis.
 
 \section{From Free-Form T5 to Controlled Rendering}
-The project documentation shows a clear evolution away from unconstrained note generation. By March 2026, the preferred architecture was no longer ``raw text to T5 note.'' The intended flow had become:
-\begin{enumerate}
-  \item validated linguistic contract;
-  \item deterministic structural enrichment;
-  \item CEFR prediction and blueprint generation;
-  \item contract-to-template transformation;
-  \item controlled lexical realization from that template;
-  \item post-render validation confirming that classifier-owned and contract-owned fields remain unchanged.
-\end{enumerate}
+During the work, I gradually moved away from the early scheme in which \texttt{T5} was expected to generate a complete explanation directly from the input representation of a sentence. In the later architecture, the process was reorganised. First, an \texttt{RLE contract} was built and validated, that is, a structural description of the sentence with its nodes, relations, and grammatical features. Then the system extracted from that representation the features needed to determine the construction type, the difficulty level, and the appropriate class of explanation. In one of the later branches, this was done not by a generative model, but by \texttt{XGBoost} classification over explicitly defined features: syntactic signatures, \texttt{grammar classes}, tense-aspect-mood information, node type, node role in the \texttt{RLE} tree, the selected template, and other contract fields. At that stage, the model no longer wrote the explanation itself. Instead, it selected what kind of explanation the sentence required. Only after that did the system move to the template and to the verbal formulation of the final note.
 
-This evolution is important for the thesis because it supports a more mature claim than ``the system uses T5.'' The stronger claim is that generation is being progressively confined to the narrowest part of the problem where wording variation is desirable but structural drift is unacceptable.
+This was a principled change in the work. In the earlier scheme, the model tried to write the final explanatory text immediately, so too much depended on free generation. Even when the output sounded plausible, it could remain only weakly tied to the actual grammatical structure of the sentence. In the later scheme, I first fixed the structure of the sentence, then determined its grammatical characteristics, and only after that allowed the system to move to textual formulation. In other words, generation stopped being the place where the main decision about the meaning of the explanation was made. That decision was made earlier, at the level of structure, features, and explanation-class selection.
+
+This was the main architectural shift. I did not remove models from the system, and I did not replace everything with rules. What I removed was free text generation from those stages where it introduced too many errors and distortions. As a result, the model no longer solved the task ``invent an explanation from scratch,'' but a narrower task: to phrase an already selected explanation in words without breaking its link to the grammatical structure of the sentence.
 
 
 \section{How the Dataset Strategy Evolved: From Raw Corpora to Grammar Books}
