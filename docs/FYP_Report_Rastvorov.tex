@@ -366,14 +366,15 @@ The RLE contract forms the structural foundation of the entire ELA system. Its p
 It is precisely this structure that makes RLE both a working contract for the internal components of the system and a convenient form of representation for further processing. It makes it possible to connect parser-based analysis, rule-based interpretation, classifier and generation components, runtime services, and user-facing visualization within one coherent model. In this way, RLE is needed not only for data storage, but also to ensure that the same structural form can be used for analysis, validation, machine processing, visual rendering, and pedagogical interpretation.
 
 \section{Hierarchy}
-The implemented hierarchy uses three conceptual layers:
-\begin{enumerate}
-  \item \textbf{Sentence} as the root pedagogical and analytical unit;
-  \item \textbf{Phrase} as an intermediate structure carrying meaningful chunks such as noun phrases, prepositional phrases, or other grouped spans;
-  \item \textbf{Word} as the terminal lexical unit carrying finer grammatical metadata.
-\end{enumerate}
+The hierarchy of the current RLE contract is organized as a recursive tree in which \texttt{Sentence} always serves as the root of the entire structure. This root node defines the boundaries of the sentence and brings together the general information about the utterance: its textual content, core grammatical characteristics, translation, CEFR level, pedagogical notes, service identifiers, and the array of child elements stored in \texttt{linguistic\_elements}. In this way, the sentence functions not simply as a string of text, but as the top-level node from which the whole structure of analysis unfolds.
 
-This structure is recursive because every non-terminal node contains a \texttt{linguistic\_elements} array of child nodes, making the contract easy to traverse, validate, render, and export.
+Below the root, the tree is built flexibly. Within a sentence, there may be both \texttt{Phrase} nodes and \texttt{Word} nodes, depending on how the analysis of a particular fragment has been constructed. \texttt{Phrase} nodes are used to represent intermediate branches of the tree, that is, syntactically and semantically meaningful groups within the sentence. In the actual contract, these may include such nodes as \texttt{verb phrase}, \texttt{prepositional phrase}, \texttt{noun phrase}, \texttt{relative clause}, and other phrasal structures. These branches are needed in order to connect the sentence as a whole with its internal parts and to store at these intermediate levels their own roles, spans, translations, pedagogical notes, and other fields whenever such information has been assigned to the node.
+
+At the same time, phrasal nodes do not form one fixed layer. They may directly contain child words, but they may also break down into embedded subphrases when the structure of the sentence requires a deeper branching organization. For this reason, the hierarchy in RLE is not a rigid ladder of predefined stages, but a recursive tree with potentially nested branches.
+
+\texttt{Word} nodes represent individual tokens and function as the leaves of the tree, that is, as terminal elements that are not further divided inside the contract. In the current code, such nodes carry fields related to the token text, its position in the sentence, its part of speech, grammatical role, dependency links, \texttt{head\_id}, \texttt{parent\_id}, \texttt{source\_span}, and, where available, translation, phonetics, CEFR assessment, grammar classes, note blueprints, and other enrichments. A leaf node may therefore be attached either directly to the sentence root or to one of the intermediate phrasal nodes, depending on how the structure was built.
+
+The basic logic of the RLE hierarchy can therefore be summarized as follows: \texttt{Sentence} always forms the root, \texttt{Phrase} nodes form intermediate branches, and \texttt{Word} nodes most often function as the leaves of the tree. It is this recursive organization that makes the contract suitable for analysis, validation, visualization, machine processing, and pedagogical interpretation within one and the same data model.
 
 \section{Core Fields}
 The contract uses a mixture of required and optional fields. The exact field set evolved during implementation, but the most important fields include:
