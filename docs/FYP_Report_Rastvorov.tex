@@ -962,11 +962,61 @@ In summary, the work used:
 This separation was necessary for \texttt{ELA}, because a single metric would not have explained the system properly: it would not have shown separately the quality of the structure, the quality of explanation selection, or the operational state of the system as a whole.
 
 \section{What the Current Evidence Supports}
-The project contains substantial test infrastructure and multiple evaluation artifacts. This supports several defensible conclusions:
+The current evidence allows me to state that the project has been realised as a working and interconnected system.
+
+This is supported by the testing layer:
 \begin{itemize}
-  \item the codebase is not a loose prototype but a systematically exercised system;
-  \item CEFR and note-generation paths were treated as measurable modelling problems rather than hand-waved add-ons;
-  \item media, runtime, and persistence layers were tested as first-class concerns.
+  \item there are currently \texttt{194} Python files in \texttt{ela\_pipeline};
+  \item there are currently \texttt{122} separate test files in \texttt{tests/};
+  \item the key subsystems with the strongest test presence are:
+  \item \texttt{classifier}: \texttt{53} source files and \texttt{46} test files;
+  \item \texttt{runtime}: \texttt{15} source files and \texttt{14} test files;
+  \item \texttt{db}: \texttt{6} source files and \texttt{8} test files;
+  \item \texttt{dataset}: \texttt{57} source files and \texttt{20} test files;
+  \item separate test layers are also present for important applied areas:
+  \item \texttt{media}: \texttt{7} test files;
+  \item \texttt{quality control}: \texttt{4};
+  \item \texttt{validator}: \texttt{2};
+  \item \texttt{pipeline}: \texttt{3};
+  \item \texttt{contract-related}: \texttt{3};
+  \item in addition, there are dedicated tests for \texttt{CEFR}, \texttt{phonetic}, \texttt{translate}, \texttt{hil}, \texttt{identity}, \texttt{tam}, and \texttt{synonyms}.
+\end{itemize}
+
+This is supported by the production deployment:
+\begin{itemize}
+  \item \texttt{ELA} is deployed on a separate Hetzner server;
+  \item the working project path on the server is \texttt{/opt/ela};
+  \item the active branch is \texttt{master};
+  \item the deployed commit on the server is \texttt{635a075};
+  \item the container stack is running under Docker Compose and includes:
+  \item \texttt{ela-app};
+  \item \texttt{ela-frontend-1};
+  \item \texttt{ela-postgres}.
+\end{itemize}
+
+This is supported by manual verification of the live instance:
+\begin{itemize}
+  \item \texttt{https://el-a.uk} responds with \texttt{200};
+  \item the public frontend is available and served correctly;
+  \item the PWA layer and manifest are available;
+  \item a local check of the frontend container through \texttt{127.0.0.1:8080} also returns \texttt{200};
+  \item \texttt{postgres} is in a working state and accepts connections.
+\end{itemize}
+
+This is supported by the observed system behaviour in the logs:
+\begin{itemize}
+  \item the containers have been running for weeks without signs of crash behaviour;
+  \item the recent logs are dominated mainly by external scanning and low-value traffic;
+  \item requests to \texttt{/.env}, \texttt{phpunit}, \texttt{wp-login}, \texttt{actuator/health}, and similar paths do not expose sensitive data;
+  \item the system responds to such requests with refusal codes (\texttt{404}, \texttt{405}, \texttt{501}) rather than unstable behaviour.
+\end{itemize}
+
+Therefore, the current evidence allows me to state that:
+\begin{itemize}
+  \item the project exists not only as a research idea, but as an executable system;
+  \item its key parts are being tested systematically;
+  \item it is genuinely deployed as a containerised service on Hetzner;
+  \item its main components operate as a connected stack rather than as isolated modules.
 \end{itemize}
 
 \section{Classifier Path and Controlled Generation Evidence}
