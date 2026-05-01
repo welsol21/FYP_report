@@ -747,14 +747,31 @@ From this there follows directly a principle of field ownership. A generative mo
 For this reason, contract safety matters in the present work not only as a technical restriction, but also as a way of making the system genuinely explainable and verifiable. Explainability here is ensured not only by how the result appears in the interface or how convincing its wording may be, but above all by the fact that different parts of the `RLE contract` belong to different sources of formation and are not allowed to collapse into one another. User-facing text may be generated, but the structural basis of the sentence, its grammatical relations, and its classificatory features must not be altered arbitrarily at the generation stage. It is in this sense that contract-safe architecture became one of the strongest engineering ideas in the project: it makes explainability a property not only of the presentation layer, but of the internal organization of the system itself.
 
 \section{Deployment and Service Boundaries}
-The Docker deployment documentation shows that ELA is no longer just a local research script collection. The intended deployed form has three clear service boundaries:
+Code development in this project followed a TDD-oriented workflow, whereas deployment was treated as a separate operational procedure for bringing ELA into a stable production state. In this work, the production instance of the system was deployed on the Hetzner-hosted server \texttt{el-a.uk}, where a server-side copy of the repository was maintained in \texttt{/opt/ela} on branch \texttt{master}. The deployment procedure was explicitly defined: changes were first merged locally from \texttt{dev} into \texttt{master} and pushed to the remote repository, after which the server executed \texttt{git pull} followed by a Docker Compose restart. As a result, the production system was updated not through a separately published build artifact, but through rebuilding the server instance directly from the current repository state.
+
+This procedure makes it clear that by the final stage of the project ELA existed not merely as a collection of research scripts, but as a system with explicit service boundaries, technical constraints, and a formalised update procedure.
+
+Infrastructure roles:
 \begin{itemize}
-  \item PostgreSQL for persistent storage;
-  \item an application container for inference, runtime APIs, and migrations;
-  \item a frontend container serving the React interface through Nginx.
+  \item the frontend is responsible for the user interface;
+  \item the application layer performs the core system logic;
+  \item PostgreSQL provides persistent data storage.
 \end{itemize}
 
-The same documentation also avoids overclaiming. It explicitly distinguishes \texttt{online} and \texttt{offline} runtime modes, notes that model downloads may be disabled at runtime, and states that some features are unavailable in stricter offline or distributed policies. It also makes deployment policy visible as part of the architecture itself through environment-level constraints for media duration, media size, phonetic availability, deployment mode, and runtime download permissions. This is exactly the kind of nuance the final thesis should keep, because it turns ``offline-first'' and ``privacy-first'' from slogans into constrained operational modes with explicit trade-offs.
+Constraints:
+\begin{itemize}
+  \item the production environment is built in a dedicated container configuration rather than matching the full development environment;
+  \item not all components are permitted to be downloaded at runtime;
+  \item part of the system behaviour is predefined through environment variables and deployment mode.
+\end{itemize}
+
+Update procedure:
+\begin{itemize}
+  \item changes are first merged into \texttt{master};
+  \item the server then pulls the current repository state;
+  \item the containers are rebuilt and restarted afterwards;
+  \item the frontend is updated with a forced rebuild without cache.
+\end{itemize}
 
 \chapter{Dataset and Corpus Engineering}
 \section{Why Dataset Engineering Matters}
