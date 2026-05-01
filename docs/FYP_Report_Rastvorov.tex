@@ -1029,7 +1029,9 @@ For that reason, this early checkpoint has to be read together with the later cl
 It is equally important that as the project developed, the classifier path did not merely grow in size, but was compared against alternatives. The saved comparative artefacts show that the tabular/XGBoost branch was, in practical terms, stronger than one of the full-ladder \texttt{DeBERTa} branches. Therefore, the classifier path in this work did not remain a ``proof of concept'' by inertia. It was genuinely subjected to scaling, comparison, and stress-testing, and later architectural decisions were made on the basis of those results.
 
 \section{Concrete Tabular Evaluation Snapshot}
-Another useful artifact is the full-ladder tabular evaluation snapshot dated 2026-03-05. Unlike broad narrative claims, this file gives a concrete checkpoint with explicit split sizes and summary metrics:
+The previous section showed that the classifier path in the work developed from a minimal working run into a much larger and more substantial form. However, that transition by itself does not yet show what state the system had reached in numerical terms. For that reason, it is useful to consider one concrete evaluation checkpoint that provides not only a general sense of development, but also explicit dataset sizes and metrics.
+
+In this work, that checkpoint is the tabular evaluation snapshot dated \texttt{2026-03-05}. It is important because it records not an early validation stage, but a more mature run on a large dataset. In this run, the model predicted not only \texttt{CEFR}, but two characteristics of the sentence at once: the difficulty level and the primary grammatical class. In other words, the system had to answer two questions simultaneously: how difficult the construction was and what grammatical type it belonged to.
 
 \begin{table}[H]
   \centering
@@ -1050,7 +1052,11 @@ Another useful artifact is the full-ladder tabular evaluation snapshot dated 202
   \end{tabular}
 \end{table}
 
-This snapshot is useful for two reasons. First, it proves that at least one later evaluation stage moved far beyond the tiny baseline freeze described in the February phase-1 report. Second, it shows why metric claims must be attributed carefully: different documents in the repository reflect different phases, datasets, and evaluation scopes. For the thesis, the safest strategy is to treat metrics as checkpoint-specific rather than as timeless project constants.
+These figures need to be read directly. Here, \texttt{joint accuracy} means that the model had to predict both characteristics correctly at the same time: the \texttt{CEFR} level and the grammatical class. In the same run, the separate \texttt{CEFR} scores reach \texttt{1.0}, while the more difficult part remains grammatical classification, where \texttt{macro-F1} stays at about \texttt{0.81--0.82}. This shows that in this case difficulty-level prediction was no longer the main challenge, while distinguishing between grammatical types remained the harder task.
+
+This snapshot therefore makes the conclusion of the previous section more concrete. There, the point was that the classifier path had not only been assembled, but had also been developed substantially. Here, it becomes clear what that development meant at one later stage: a large training run in which the system was already solving a more demanding task than at the beginning and producing a measurable result for it.
+
+At the same time, such metrics cannot be detached from the conditions under which they were obtained. They belong to a specific run, a specific dataset, and a specific joint-classification task. For that reason, this snapshot should be used in the thesis not as a universal number for the whole system, but as a measurement point showing the state that the classifier path had reached at this stage of the work.
 
 \section{Comparative Evidence and Intermediate Results}
 The evaluation story becomes stronger when intermediate and comparative artifacts are treated as part of the evidence rather than dismissed as noise. For example, the March 2026 comparison between the tabular full-ladder path and the DeBERTa-based full-ladder path shows that the tabular route became the stronger practical choice for the production-oriented stack. In that comparison, the DeBERTa CEFR-only hygiene smoke result achieved only 0.1612 accuracy and 0.0463 macro-F1, collapsing almost all predictions to the `C1` class. This is a valuable engineering result because it explains why the project moved away from treating the heavier classifier path as the obvious runtime default.
