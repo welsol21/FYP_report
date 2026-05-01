@@ -487,13 +487,11 @@ At the same time, the current state of the code shows that this architectural bo
 In this way, the significance of the canonical sample does not lie in showing “all fields at once”, but in making visible the current logic of the system as a whole: the contract functions not as a passive storage schema, but as an active boundary between structural truth, interpretation, prediction, generation, and learner-facing presentation of the result.
 
 \section{Why Hierarchical JSON}
-Hierarchical JSON was chosen over flatter annotation forms for several reasons:
-\begin{itemize}
-  \item it matches the recursive structure required by the visualizer;
-  \item it allows sentence, phrase, and word nodes to share a common schema family;
-  \item it supports machine validation and human inspection at the same time;
-  \item it simplifies serialization for runtime storage, export, and testing.
-\end{itemize}
+Hierarchical JSON was chosen in ELA not simply as a convenient technical format, but as a form of representation that corresponds to the nature of linguistic structure itself. In the project, a sentence is treated not as a linear sequence of words, but as a hierarchy of grammatical and lexico-grammatical constructions expressed through the nesting of element-nodes. For this reason, the RLE contract is built as a recursive tree: this form more accurately reflects how language is actually organized across the levels of sentence, phrase, and word.
+
+At the same time, this form of organization is important not only for theoretical reasons. It also allows the system to work with the same structure throughout all stages of processing, from parser-based analysis and rule-based interpretation to pedagogical notes, runtime processing, visualization, and export. If the project had used a flat annotation scheme, the relations between levels would have had to be constantly reconstructed through external fields, additional assembly logic, and more complex synchronization between analysis, validation, and user-facing presentation of the result.
+
+From a practical point of view, this format also proved more convenient for several tasks at once. It naturally matches the logic of the visualizer, where the tree does not have to be rebuilt from disconnected records. It makes it possible to use the same schema family for sentence-, phrase-, and word-level nodes. It is better suited to node-by-node validation and to rules that check not only individual fields, but also relations inside subtrees. Finally, it simplifies runtime storage, export, testing, and data exchange between system components, because the whole sentence is passed as a single structured object.
 
 \begin{table}[H]
   \centering
@@ -502,11 +500,11 @@ Hierarchical JSON was chosen over flatter annotation forms for several reasons:
     \toprule
     Criterion & Hierarchical RLE & Flat annotation \\
     \midrule
-    Structural nesting & Native & Requires external linking \\
-    Frontend rendering & Direct tree traversal & Extra assembly layer needed \\
-    Validation & Node-by-node plus subtree rules & Easier locally, weaker globally \\
-    Pedagogical readability & Strong for progressive disclosure & Often fragmented \\
-    Export simplicity & High for JSON workflows & Higher for spreadsheets only \\
+    Structural nesting & Nesting is expressed directly inside the tree & Nesting must be reconstructed through external links \\
+    Interface representation & The visualizer can work with the tree directly & An additional tree-assembly layer is required \\
+    Validation & Supports checks of both individual nodes and subtrees & Easier for individual records, weaker for whole-structure validation \\
+    Pedagogical readability & Supports gradual disclosure of structure well & More likely to fragment the pedagogical view \\
+    Export and serialization & Well suited to JSON-based runtime, export, and testing workflows & More convenient mainly for tabular and spreadsheet-like formats \\
     \bottomrule
   \end{tabularx}
 \end{table}
