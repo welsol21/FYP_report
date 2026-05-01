@@ -476,32 +476,15 @@ Listing~\ref{lst:rleexample} presents a shortened but current example of a sente
 \end{lstlisting}
 
 \section{What the Canonical Sample Shows}
-The repository's canonical sample contract makes several implementation decisions explicit. A sentence node is not just a container for text; it is a convergence point for structural, pedagogical, bilingual, and traceability layers:
-\begin{itemize}
-  \item sentence and phrase nodes can carry TAM values and pedagogical notes;
-  \item node-level translations and phonetic values are attached as first-class fields rather than external lookups;
-  \item \texttt{grammar\_classes}, \texttt{note\_blueprints}, and \texttt{note\_generator\_version} preserve the distinction between structural evidence and rendered learner-facing wording;
-  \item \texttt{source\_span}, \texttt{node\_id}, and \texttt{parent\_id} make every node referentially stable enough for UI selection, validation, and later editing.
-\end{itemize}
+The canonical sample contract matters not only as an illustration of structure, but also as a compressed reflection of the current architectural decisions of the project. It shows that a sentence-level node is no longer a simple container for text. It simultaneously carries structural fields, grammatical interpretation, translation, CEFR assessment, pedagogical notes, note blueprints, and links to the child elements of the tree. In other words, in the current state of the system, one and the same node acts as the meeting point of several layers at once: parser-based structure, rule-based grammatical interpretation, predictive enrichment, and learner-facing presentation.
 
-The field-ownership matrix dated 2026-03-04 clarifies why this sample matters architecturally. The contract is not a place where one model predicts everything. Instead, different field families belong to different sources of truth: parser and builder rules own structure, rules-first logic owns TAM and grammatical interpretation, tabular ML owns CEFR, and T5 is constrained to learner-facing note wording only. This is one of the most important implementation outcomes of the project, because it turns the contract from a passive schema into an active boundary between deterministic truth, predictive enrichment, and generated phrasing.
+From a practical point of view, this sample makes several important features of the current contract visible. First, translation, phonetics, CEFR, and pedagogical fields are embedded directly into the node rather than being loaded as external auxiliary objects. Second, sentence-level and phrase-level nodes can genuinely carry their own TAM characteristics, grammatical roles, and learner-facing notes, rather than functioning merely as intermediate containers. Third, the fields \texttt{node\_id}, \texttt{parent\_id}, \texttt{source\_span}, \texttt{dep\_label}, and \texttt{head\_id} make the node not simply a part of a visible tree, but a stable unit for navigation, validation, editing, and coordination across the internal layers of the system.
 
-\begin{table}[H]
-  \centering
-  \caption{Representative field groups in the canonical sample contract}
-  \begin{tabularx}{\textwidth}{>{\bfseries}p{3.6cm}X}
-    \toprule
-    Field group & Function in the system \\
-    \midrule
-    Core identity & \texttt{type}, \texttt{content}, \texttt{node\_id}, \texttt{parent\_id} \\
-    Structural alignment & \texttt{source\_span}, \texttt{grammatical\_role}, \texttt{dep\_label}, \texttt{head\_id} \\
-    Grammar interpretation & \texttt{tense}, \texttt{aspect}, \texttt{mood}, \texttt{voice}, \texttt{finiteness}, \texttt{tam\_construction} \\
-    Pedagogical layer & \texttt{linguistic\_notes}, \texttt{grammar\_classes}, \texttt{note\_blueprints} \\
-    Learner support & \texttt{translations}, \texttt{phonetic}, \texttt{synonyms}, \texttt{cefr\_level} \\
-    Traceability & \texttt{schema\_version}, \texttt{note\_generator\_version} and related quality fields \\
-    \bottomrule
-  \end{tabularx}
-\end{table}
+This example is especially important in the context of field ownership. The document \texttt{contract\_field\_ownership\_2026-03-04} fixes the intended architectural boundary quite clearly: the shape of the tree, node identity, syntactic relations, and the basic grammatical interpretation should remain under the control of parser-based and rules-based components; \texttt{cefr\_level} should be determined through a separate predictive layer; and the generative model should not invent structural truth, but should only formulate already selected pedagogical interpretation in learner-facing wording. For this reason, the fields \texttt{grammar\_classes}, \texttt{note\_blueprints}, and \texttt{linguistic\_notes} cannot be treated as the same thing: in the current architecture they belong to different stages of processing and to different sources of truth.
+
+At the same time, the current state of the code shows that this architectural boundary has largely been established, but has not yet been made perfectly clean everywhere. On the one hand, runtime and validator already treat the contract as a coherent structure, normalize the shape of \texttt{linguistic\_notes}, and enforce strict behaviour in \texttt{v2\_strict}. On the other hand, the inference path still contains a tension between blueprint-owned and generation-owned fields: part of the code already uses \texttt{note\_blueprints} as the source for user-facing notes, but the controlled T5 rewrite still modifies the blueprint values themselves. For this reason, the canonical sample is important not only as an example of the mature form of the contract, but also as a point through which it becomes visible which ownership decisions in the project have already been fixed, and which are still not fully cleaned up at the level of implementation.
+
+In this way, the significance of the canonical sample does not lie in showing “all fields at once”, but in making visible the current logic of the system as a whole: the contract functions not as a passive storage schema, but as an active boundary between structural truth, interpretation, prediction, generation, and learner-facing presentation of the result.
 
 \section{Why Hierarchical JSON}
 Hierarchical JSON was chosen over flatter annotation forms for several reasons:
