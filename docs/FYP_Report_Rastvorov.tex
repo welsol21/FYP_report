@@ -1098,13 +1098,15 @@ The interactions inside the multimodal path also remain weaker. By this stage, t
 Finally, the review showed one more important imbalance. The project already connects structural analysis, explanation selection, and controlled note construction quite well, but the connection between this strong architecture and the completeness of the overall explanation space remains less fully supported. In other words, the working scheme of the system already appears mature, but the breadth of the explanation inventory that has actually been confirmed still lags behind the maturity of the scheme itself.
 
 \section{Overall Assessment}
-Overall, the project evaluates well as a research-engineering system:
-\begin{itemize}
-  \item it is broad enough to demonstrate full-stack integration;
-  \item it is deep enough to support concrete architectural and modelling discussion;
-  \item it is honest enough, when reviewed carefully, to show the gap between implemented ambition and production hardening;
-  \item it preserves enough intermediate evidence to explain why later design decisions were made.
-\end{itemize}
+Overall, the project can be evaluated as a realised research-engineering system.
+
+First, it is broad enough in scope. The work includes not only models and datasets, but also the full applied loop: sentence-structure analysis, explanation selection, controlled note generation, the runtime layer, the frontend, the backend, the database, and production deployment. For that reason, \texttt{ELA} can be treated not as an isolated research experiment, but as a full-stack system with real interaction between its parts.
+
+Second, the project is deep enough in its internal content. At this stage, it is possible to discuss not only the general idea, but also concrete architectural and modelling decisions: why the \texttt{RLE contract} was needed, why free generation turned out weaker than a more controlled scheme, how templates changed the task, how the classifier path evolved, and why the later architecture became narrower and more controllable. In other words, the project provides material not only for demonstrating a result, but also for substantive technical analysis.
+
+Third, the work remains honest in its results. A careful review shows not only what has already been built, but also the gap between implemented ambition and full production hardening. This does not weaken the project as a research effort. On the contrary, it makes it more convincing: the strengths are supported by facts, while the limitations are neither hidden nor disguised behind overly general claims.
+
+Finally, the project preserves enough intermediate artefacts to make it possible to trace why the later decisions were taken in the form they were. The history of the datasets, the comparative runs, the quality-control materials, and the evaluation checkpoints all show that the architecture did not change arbitrarily, but in response to real intermediate results. For that reason, \texttt{ELA} can be evaluated not only by its final state, but also by the consistency with which it accumulated and interpreted engineering evidence along the way.
 
 \section{End-to-End Integration Perspective}
 The PWA integration documentation provides one more useful perspective on evaluation. It identifies concrete failure classes that unit tests alone may miss: browser-side model availability, service-worker cache drift, ffmpeg-related rendering failures, missing proxy headers, and user-flow stalls during long-running media processing. For the thesis, this broadens the meaning of ``system validation.'' In ELA, validation is not only about linguistic correctness; it is also about whether a learner can move from upload to usable artifact through a stable interface path.
