@@ -1068,16 +1068,21 @@ A similar role was played by the intermediate results in the note-generation bra
 A direct conclusion followed from this in the work. The later architecture was chosen as narrower but more controllable: the structure of the sentence was fixed first in the \texttt{RLE contract}, then the level and the explanation type were determined separately, after that the system moved to a template, and only at the final stage did it produce the verbal formulation of the note. In other words, the weak results of the comparative and intermediate runs showed which solutions were not providing the required stability, and this is what led to the shift from more open-ended generative schemes to a more tightly constrained pipeline.
 
 \section{What the Current Evidence Does Not Fully Support}
-At the same time, the current development state also places important limits on the thesis claims. The current codebase is not fully green under the project's own unit-test suite. Targeted failures remain in:
+At the same time, the current evidence still does not justify very strong claims about the completeness or final maturity of the system. The main reason is not the absence of working components, but the narrowness of the final working datasets on which the main later results were obtained, and the high cost of producing those datasets.
+
+As shown above, the final working datasets in the note-selection experiments contained \texttt{3875} and \texttt{5016} rows. These are no longer tiny trial samples, but they are also not broad enough to support unrestricted claims about complete coverage of the explanation space. These datasets were not simple slices taken directly from a large raw corpus. They were the result of a long selection process: removing repetition, filtering weak formulations, limiting overly frequent targets, balancing, templating, parameterisation, and checking structural suitability. In other words, the final datasets were obtained at a high cost, and for that reason they remained relatively narrow compared with the original volume of material.
+
+This limits the strength of the conclusions in a concrete way:
 \begin{itemize}
-  \item node-level translation propagation;
-  \item phrase and sentence skeleton behaviour;
-  \item validation-mode consistency around TAM fields;
-  \item ASR sentence resegmentation and metadata filtering;
-  \item parts of the runtime-service integration boundary.
+  \item I can claim that the chosen direction works on these disciplined working datasets;
+  \item I can claim that a more structural input and a more controlled explanation-selection process bring a practical benefit;
+  \item I can claim that the move toward templates and controlled rendering was justified;
+  \item but I cannot yet claim that this is already enough for broad and even coverage of the whole note space.
 \end{itemize}
 
-This matters because it affects how evaluation should be written. The system can be defended as substantial and technically serious, but not as fully stabilized across every path.
+The same applies to the phrase-level branch. As shown above, it remained noticeably weaker than the sentence-level layer. This means that even with strong later checkpoints, I cannot claim that the whole system is already supported equally well at every level. By this stage, the sentence-level branch appears more mature, while phrase-level coverage remains narrower and less stable.
+
+For that reason, the most accurate conclusion here is straightforward. The current evidence confirms that the project has been realised technically and that the chosen architecture produces a working result. But it does not yet confirm that the present scale and composition of the datasets are already sufficient for broad claims about the completeness, balance, and final maturity of the whole note-generation layer.
 
 \section{Representative Findings from Review}
 The implementation review identified the following representative engineering realities:
