@@ -1118,20 +1118,26 @@ For that reason, the next logical step for stable development and future scaling
 This matters especially for \texttt{ELA} because the project has already moved beyond the stage where the main challenge was simply building separate working components. The challenge is now shifting toward how those components can continue to evolve together in a stable way. For that reason, the end-to-end integration perspective here should be understood as an architectural transition: from a research monolith that was well suited to the earlier phase, toward a more data-driven and hexagonal system capable of stable growth, independent subsystem updates, and more mature product-scale deployment.
 
 \section{Objectives-to-Evidence View}
+In the \texttt{Objectives} section of the present thesis, four main goals of the implementation phase were defined. For that reason, at the end of the evaluation chapter it is important to show not simply a collection of results, but how those results make it possible to treat each of these goals as fulfilled. The table below aligns the goals of the present thesis with the outcomes that support such a conclusion.
+
 \begin{table}[H]
   \centering
-  \caption{High-level objective-to-evidence mapping for the current thesis}
-  \begin{tabularx}{\textwidth}{>{\bfseries}p{2cm}X X}
+  \caption{Alignment between the goals of the present thesis and the results that support their fulfilment}
+  \begin{tabularx}{\textwidth}{>{\bfseries}p{1.3cm} X X}
     \toprule
-    Objective & Intended outcome & Current evidence type \\
+    Objective & Intended outcome & What shows that the goal was achieved \\
     \midrule
-    O1 & Multimodal pipeline from text/audio/video to sentence-level analysis & runtime modules, integration-test guide, API/service code, unit tests \\
-    O2 & Stable hierarchical contract carrying structural and pedagogical metadata & sample contract, validator, schemas, curator report, contract-safe architecture docs \\
-    O3 & Learner-facing interface for exploration, export, and workflow control & React/Vite frontend, runtime API endpoints, visualizer-related implementation artifacts and docs \\
-    O4 & Improved note-generation generalization through structural abstraction & template-process docs, template-expansion strategy, T5/placeholder narrative in project docs \\
+    O1 & Construct a multimodal pipeline that takes in text, audio, and video and converts them into structured sentence-level representations & the system includes a text path, a media path, the sentence-contract pipeline, runtime services, the API layer, and a deployment contour, so the input material does in fact pass through to a structured sentence-level result \\
+    O2 & Formalize a hierarchical contract capable of carrying grammatical, pedagogical, and bilingual metadata in a stable and validated form & the work implements the \texttt{RLE contract}, validator logic, schema definitions, sample contracts, and contract-safe processing rules, so this structure is not only described, but actually used as a working foundation of the system \\
+    O3 & Provide a learner-facing application that exposes linguistic structure through an interactive visualizer, export flow, and media-oriented workflow & the project includes the frontend, visualizer-related components, export logic, runtime endpoints, and a deployed PWA/frontend contour, so the result has been carried through to a user-facing application rather than remaining only a backend pipeline \\
+    O4 & Explore whether abstract structural templates support stronger note-generation generalization than raw lexical notation & the work moved from raw lexical generation toward template-based and placeholder-based paths, carried out comparative runs, built controlled-rendering logic, and produced later note-selection datasets, so this direction was not only proposed, but actually tested experimentally \\
     \bottomrule
   \end{tabularx}
 \end{table}
+
+This table is needed in order to return the evaluation chapter to the frame that was defined earlier in the \texttt{Objectives} section. It shows that the goals of the present thesis did not remain declarative. The first goal is supported by the implemented multimodal pipeline. The second is supported by the fact that the contract exists as a working and validated structure. The third is supported by the fact that the system has been brought through to a learner-facing application. The fourth is supported by the fact that structural abstraction in note generation was actually tested through data, models, and the later controlled architecture.
+
+The final conclusion here is straightforward: with respect to the goals that were explicitly defined in the \texttt{Objectives} section of the present thesis, the implementation phase can be regarded as completed. This is supported not by one overall metric, but by a combination of results: architecture, executable code, the runtime contour, deployment, dataset engineering, and experiments on note generation.
 
 \chapter{Discussion, Limitations, and Future Work}
 \section{Discussion}
