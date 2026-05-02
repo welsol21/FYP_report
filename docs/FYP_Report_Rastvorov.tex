@@ -1085,13 +1085,17 @@ The same applies to the phrase-level branch. As shown above, it remained noticea
 For that reason, the most accurate conclusion here is straightforward. The current evidence confirms that the project has been realised technically and that the chosen architecture produces a working result. But it does not yet confirm that the present scale and composition of the datasets are already sufficient for broad claims about the completeness, balance, and final maturity of the whole note-generation layer.
 
 \section{Representative Findings from Review}
-The implementation review identified the following representative engineering realities:
-\begin{itemize}
-  \item the runtime layer strongly validates frontend-visible payloads, which is architecturally good, but currently exposes payload-shape mismatches;
-  \item the skeleton builder remains a critical subsystem, and regressions there have direct pedagogical consequences because phrase structure is learner-visible;
-  \item translation quality is not only a linguistic issue but also a structural one, because wrong projection to child nodes changes what the learner sees as local meaning;
-  \item the media path is operationally ambitious, but multimodal support is more fragile than the text path.
-\end{itemize}
+The review showed that the project had already been assembled not as a set of isolated modules, but as a system of connected parts. By this stage, the strongest interaction existed between sentence structure analysis, difficulty-level prediction, explanation-type selection, and final note construction. This is one of the strongest sides of \texttt{ELA}: the system does not simply try to write the final text immediately, but first builds an internal description of the sentence, then determines how difficult the construction is and what exactly needs to be explained, after that selects an appropriate form of explanation, and only at the final stage moves to verbal wording. As a result, the main decision about the content of the explanation no longer remains entirely inside free generation.
+
+The preparation of data, the training of models, and the later evaluation of results were also strongly connected. In the project, the datasets did not exist separately from the models: the way the data were cleaned, balanced, templated, and reduced into a more disciplined set directly affected what tasks could later be given to the models and what results could be obtained from them. This is a strength of the work because there is a direct connection here between the structure of the data and the structure of the system itself, rather than two layers that happen to evolve side by side.
+
+Another strength of the project is that its internal processing is already connected to a real user-facing loop. \texttt{ELA} exists not only as a set of offline experiments, but as a deployed system in which the frontend, backend, database, and runtime services operate together. This matters because it allows the project to be treated as a realised software system rather than only as a research pipeline.
+
+The review also showed weaker points in the interaction between the parts. Most importantly, the work with whole sentences is noticeably more mature at this stage than the work with smaller internal fragments inside them. For full-sentence explanations, there is already stronger template coverage, a clearer explanation-selection path, and more stable later results. For the phrase level, the same chain remains narrower and weaker. In other words, the system is more fully developed where it explains the sentence as a whole than where it must explain smaller internal structures in a stable way.
+
+The interactions inside the multimodal path also remain weaker. By this stage, the text path already appears more direct and disciplined: a sentence enters the system, is analysed, receives a difficulty level, an explanation type, and a final note in a relatively clear sequence. The media path is longer and more fragile: it must first go through ingestion, ASR, segmentation, metadata filtering, and sentence extraction before it can even enter the main linguistic pipeline. For that reason, the media branch depends more heavily on the quality of its intermediate stages and is less tolerant of errors at the input side.
+
+Finally, the review showed one more important imbalance. The project already connects structural analysis, explanation selection, and controlled note construction quite well, but the connection between this strong architecture and the completeness of the overall explanation space remains less fully supported. In other words, the working scheme of the system already appears mature, but the breadth of the explanation inventory that has actually been confirmed still lags behind the maturity of the scheme itself.
 
 \section{Overall Assessment}
 Overall, the project evaluates well as a research-engineering system:
