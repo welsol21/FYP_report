@@ -1150,46 +1150,19 @@ This is also the point at which the research and engineering sides of the thesis
 \section{From LLM Pattern Learning to a General Scientific Method:
          A Pattern-Sequence Hypothesis}
 
-The hypothesis formalised in this section did not originate as an abstract theoretical claim.
-It emerged through a sequence of practical observations during the ELA implementation work
-and was subsequently confirmed in a second, physically unrelated domain.
-The fact that the same core idea surfaced independently in two domains---natural language
-pedagogy and meteorological forecasting---is what elevates it from an engineering note to
-a candidate general principle.
+The hypothesis formalised in this section did not arise as a pre-planned theoretical claim. It grew out of practical observations during the implementation of \texttt{ELA} and was later noticed again in a second, physically unrelated domain. It is this reappearance of the same core idea in two different areas---language pedagogy and meteorological forecasting---that allows it to be treated not merely as a local engineering conclusion, but as a candidate for a more general principle.
 
 \subsection*{Origin in the ELA Pipeline Failure}
 
-The first encounter with the principle came from a practical failure rather than a design
-intention. When the training signal for the T5 note-generation path preserved full lexical
-surface detail, the model overfit to specific examples rather than learning transferable
-pedagogical patterns. The template-ID experiment of February 2026 made this concrete: after
-target-space balancing, the effective target inventory collapsed to only ten unique template
-identifiers, and the fallback rate on the small regression probe reached 1.0. The model had
-learned nothing useful because the surface form carried more variation than the structure---
-and the model, given no incentive to the contrary, memorised the variation rather than
-the underlying pattern. The corrective move---replacing raw notation with
-placeholder-bearing structural templates---produced qualitatively different behaviour.
-The model began to generalize across vocabulary while preserving grammatical interpretation.
-This was the first empirical encounter with the claim: the structural pattern, not the
-surface form, carries the transferable signal.
+The first encounter with this principle came through a practical failure. In the early \texttt{T5} note-generation branches, the training signal preserved too much surface lexical form. As a result, the model memorised individual examples instead of learning transferable pedagogical patterns. This became especially clear in the template-ID experiment of February \texttt{2026}: after target-space balancing, the effective inventory collapsed to only \texttt{10} unique template identifiers, while the fallback rate on the small regression probe reached \texttt{1.0}. In other words, the model learned nothing useful because surface variation dominated the hidden structure, and the model memorised that variation instead of the structure beneath it.
+
+The turning point came when raw notation was replaced with structural templates containing placeholders. After that, the behaviour of the system changed qualitatively: the model began to generalise better across different lexical realisations while preserving grammatical interpretation. This was the first clear indication that the transferable signal was not in the surface form, but in the structural pattern.
 
 \subsection*{A Historical Precedent: Mendeleev's Grammar}
 
-The intellectual analogy that clarifies this observation most sharply predates machine
-learning by more than a century. Mendeleev did not discover new chemical elements. What he
-discovered was that elements, when arranged by their intrinsic properties,
-\emph{form repeating patterns}---and that those patterns are predictive. When the
-sequence of known elements violated the expected structure, he did not discard the anomaly.
-He left an empty cell and predicted the properties of the missing element from the
-constraints imposed by its position in the pattern. The element was subsequently found.
+The clearest analogy for this observation appears long before machine learning. Mendeleev did not simply list chemical elements. He showed that elements, when arranged according to their internal properties, form repeating patterns, and that these patterns have predictive force. When a gap appeared in the sequence, this did not invalidate the system. On the contrary, it made it possible to infer the existence of a missing element and to predict its properties from its place in the overall structure.
 
-The method, stripped of its chemical content, consists of three steps: identify the minimal
-analytical unit of description appropriate to the domain, classify it, study the grammar
-of its sequential arrangements, and use that grammar to forecast. The Periodic Table is not
-a list of elements; it is a grammar of elemental transitions. This is precisely what the
-ELA and weather forecasting projects each implement in their respective domains. In neither
-case does the model learn to predict the raw surface. In both cases, it learns to predict
-the \emph{type and structure of the next analytical unit} in a sequential grammar.
+If the chemical content is removed, a more general method remains: identify the minimal analytical unit, describe its properties, study the regularities of its sequential arrangement, and then use those regularities for prediction. In that sense, the Periodic Table is not just a list of elements, but a structure of transitions between them. This is what makes the analogy important for \texttt{ELA}: the system becomes stronger not when it memorises more surface examples, but when it learns to recognise and use a stable sequence of structural patterns.
 
 \subsection*{Language as the First Domain}
 
