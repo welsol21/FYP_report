@@ -1272,32 +1272,30 @@ The structural parallel between the two domains is summarised in Table~\ref{tab:
 
 \subsection*{Formulation of the General Method}
 
-These two cases suggest a three-step method that may apply to any sufficiently regular
-natural or artificial process:
+These two cases make it possible to extract a three-step method that may apply to any sufficiently regular natural or artificial process.
 
 \begin{enumerate}
-  \item \textbf{Decompose.}
-        Identify the minimal analytical unit of description appropriate to the domain.
-        The unit should be expressive enough to capture the essential structure of a
-        regime, compact enough to form a finite vocabulary, and grounded in domain
-        knowledge rather than derived purely from statistical clustering.
-        In language, the unit is the grammatical node with its TAM and role attributes.
-        In meteorology, it is the ODE segment type with its fitted parameters.
+  \item \textbf{Decomposition.}
+        First, it is necessary to identify the minimal analytical unit appropriate to the domain.
+        This unit must be expressive enough to capture the essential structure of a regime,
+        compact enough to form a finite vocabulary, and grounded in domain knowledge rather
+        than derived only from statistical clustering.
+        In language, this unit is the grammatical node with its \texttt{TAM} and role attributes.
+        In meteorology, it is the \texttt{ODE} segment type together with its fitted parameters.
 
-  \item \textbf{Classify and sequence.}
-        Observe that naturally occurring instances of the process form sequences of these
-        units. Classify the units, record their transitions, and treat the sequence as the
-        primary object of study rather than the raw surface values.
-        The Periodic Table is the canonical example of this step applied to chemistry:
-        once elements are classified by their properties, the grammar of their arrangement
-        becomes visible and predictive.
+  \item \textbf{Classification and sequence.}
+        The next step is to recognise that real instances of the process form sequences of such units.
+        The units must then be classified, their transitions recorded, and the main object of analysis
+        treated not as raw surface values, but as the sequence of analytical units itself.
+        The Periodic Table is the classical example of this step in chemistry: once elements are
+        classified by their properties, the structure of their arrangement becomes visible and predictive.
 
-  \item \textbf{Learn the grammar and predict.}
-        Apply a sequence model to the classified unit stream. Because the model operates
-        on analytical descriptors rather than raw measurements, it learns the structural
-        regularities---the grammar---of regime transitions. Predictions are then
-        decoded back to surface form through the analytical units themselves, preserving
-        interpretability at every step.
+  \item \textbf{Learning the grammar and prediction.}
+        After that, a sequence model is applied to the stream of classified units.
+        Because the model operates not on raw measurements but on analytical descriptors,
+        it learns not surface variation but the structural regularities of transitions between regimes,
+        that is, their grammar. The prediction can then be unfolded back into surface form through
+        the analytical units themselves, preserving interpretability at every step.
 \end{enumerate}
 
 \subsection*{A New Methodology of Scientific Inquiry}
