@@ -54,12 +54,19 @@
 \setlength{\headheight}{15pt}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\thepage}
-\fancyhead[L]{ELA: English Language Assistant}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
 
 \titleformat{\chapter}[display]
   {\normalfont\bfseries\color{mtunavy}}
-  {\filleft\Huge\chaptername\ \thechapter}
+  {\filleft\Huge\chaptertitlename\ \thechapter}
   {1ex}
   {\titlerule\vspace{1ex}\filright\Huge}
 
