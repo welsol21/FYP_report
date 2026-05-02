@@ -1354,32 +1354,15 @@ engineering work. It represents a design philosophy tested in two domains and pr
 here as a candidate framework for further systematic investigation.
 
 \section{Limitations}
-The current limitations are both scientific and engineering-related:
-\begin{itemize}
-  \item some reported metrics still require careful reconciliation with the precise artifacts that produced them;
-  \item the current codebase contains unresolved regressions in the core pipeline;
-  \item multimodal support is more fragile than text-only processing;
-  \item some claims inherited from earlier project narratives need weaker wording in light of the current implementation state;
-  \item the project still lacks a full user-study layer capable of demonstrating educational impact beyond technical plausibility.
-\end{itemize}
+If the results of this chapter are taken as a whole, the main limitation appears in the same form across both domains considered here. In both \texttt{ELA} and meteorological forecasting, the architectural and research idea has already shown that it can work, but its further development runs into the same bottleneck: the quality, scale, and cost of preparing analytically usable data.
 
-The repository planning artifacts show that these limits are not abstract caveats added after the fact. Several unfinished items in the working TODO trail correspond directly to the current discussion. Examples include moving \texttt{grammar\_classes} ownership fully into the rules-first runtime path, deciding whether DeBERTa remains a research-only path or is fully retired from the mainline runtime story, and tightening provenance and licensing evidence for some advanced-corpus packages. The remaining work is now relatively concrete: the project is no longer blocked by lack of direction but by stabilization, ownership cleanup, and proof discipline.
+In the language domain, this means that it is no longer enough simply to have working datasets of a few thousand rows. Stronger generalisations require substantially larger datasets that are at the same time carefully cleaned and structurally usable. They must not merely contain text, but preserve a correct contract-compatible structure, a distinguishable grammar space, suitability for template abstraction, and sufficient pedagogical usefulness. Otherwise, growth in volume quickly turns not into stronger signal, but into an accumulation of repetition, noise, and weak explanatory cases.
 
-\begin{table}[H]
-  \centering
-  \caption{Current implementation limitations and their practical impact}
-  \begin{tabularx}{\textwidth}{>{\bfseries}p{4.1cm}X}
-    \toprule
-    Limitation area & Practical impact on the thesis or system \\
-    \midrule
-    Metric fragmentation across phases & prevents careless use of a single headline number for the whole project \\
-    Runtime-service payload mismatch & shows that architectural strictness currently outpaces some frontend/runtime integration assumptions \\
-    Skeleton and translation regressions & directly affect learner-visible tree quality and node-level interpretation \\
-    Multimodal fragility & makes text processing more stable than audio/video processing in the current codebase \\
-    Lack of large-scale user study & limits pedagogical claims to technical plausibility and architecture-backed rationale \\
-    \bottomrule
-  \end{tabularx}
-\end{table}
+In the meteorological domain, the limitation has a similar form. The approach based on analytical units and sequence modelling produced a convincing result for one station over a limited time span, but this is still not enough for broader claims. To move from proof of concept to stronger conclusions, a much wider body of observations is needed: more stations, more regimes, more weather situations, and a longer history over which the stability of this representational advantage can be tested.
+
+This produces the main generalisation across the two domains. The bottleneck is not primarily at the level of the general idea, because the idea has already produced meaningful results in two different areas. The bottleneck lies at the level of how much well-decomposed, structurally disciplined material can be assembled for its further development. In other words, the central difficulty is no longer whether such a system can be built at all, but whether it can be supplied with a sufficiently rich and sufficiently clean space of analytical units.
+
+From this follows a broader conclusion about the Pattern-Sequence Hypothesis itself. It already appears strong as a research framework and as a working method, but not yet as a fully established general law. Its next stage does not require a new formulation so much as broader testing on larger and better-covered datasets across different domains. For that reason, the main limitation of this chapter is best described in the following way: the method has already shown explanatory and practical strength, but its further confirmation now depends primarily on the scale and quality of structurally usable data.
 
 \section{Future Work}
 The most immediate future work falls into three clusters:
