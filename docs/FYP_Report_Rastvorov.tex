@@ -25,6 +25,8 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 \usepackage{colortbl}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 \definecolor{mtunavy}{HTML}{1B2A4A}
 \definecolor{mtuamber}{HTML}{F5C518}
@@ -384,6 +386,43 @@ At the same time, phrasal nodes do not form one fixed layer. They may directly c
 
 The basic logic of the RLE hierarchy can therefore be summarized as follows: \texttt{Sentence} always forms the root, \texttt{Phrase} nodes form intermediate branches, and \texttt{Word} nodes most often function as the leaves of the tree. It is this recursive organization that makes the contract suitable for analysis, validation, visualization, machine processing, and pedagogical interpretation within one and the same data model.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  snode/.style={draw=mtunavy, rounded corners=3pt, fill=mtunavy, text=white,
+                minimum width=3.2cm, minimum height=0.6cm, text centered, font=\small\sffamily},
+  pnode/.style={draw=mtunavy, rounded corners=3pt, fill=blue!18,
+                minimum width=2.6cm, minimum height=0.6cm, text centered, font=\small\sffamily},
+  wnode/.style={draw=mtunavy!60, rounded corners=3pt, fill=blue!5,
+                minimum width=1.8cm, minimum height=0.6cm, text centered, font=\small\sffamily},
+  arr/.style={->, >=Latex, thick, color=mtunavy!60}
+]
+\node[snode] (sent) at (0,0) {Sentence};
+
+\node[pnode] (np)  at (-3.2,-1.6) {Phrase (NP)};
+\node[pnode] (vp)  at ( 3.2,-1.6) {Phrase (VP)};
+
+\node[wnode] (w1) at (-4.4,-3.2) {Word};
+\node[wnode] (w2) at (-2.8,-3.2) {Word};
+\node[wnode] (w3) at ( 1.8,-3.2) {Word};
+\node[pnode] (pp)  at ( 4.4,-3.2) {Phrase (PP)};
+
+\node[wnode] (w4) at ( 3.6,-4.8) {Word};
+\node[wnode] (w5) at ( 5.2,-4.8) {Word};
+
+\draw[arr] (sent) -- (np);
+\draw[arr] (sent) -- (vp);
+\draw[arr] (np) -- (w1);
+\draw[arr] (np) -- (w2);
+\draw[arr] (vp) -- (w3);
+\draw[arr] (vp) -- (pp);
+\draw[arr] (pp) -- (w4);
+\draw[arr] (pp) -- (w5);
+\end{tikzpicture}
+\caption{Illustrative RLE tree: a \texttt{Sentence} root decomposes recursively into \texttt{Phrase} and \texttt{Word} nodes.}
+\label{fig:rletree}
+\end{figure}
+
 \section{Core Fields}
 In its current form, the RLE contract uses not just a set of isolated fields, but several functional groups of fields, each responsible for its own layer of representation. The basic layer defines the identity of the node itself. It includes \texttt{type}, which determines whether the node is a sentence, phrase, or word, \texttt{content}, which stores the textual content of the node, and \texttt{part\_of\_speech}, which records its grammatical category in a form suitable for further interpretation. These fields give the node its minimal form as an independent element of the tree.
 
@@ -559,6 +598,30 @@ Within this framework, context means the observable concrete instances with whic
 
 The value of the framework lies in distinguishing these two levels without separating them completely. A pattern does not exist outside contexts: it is derived from many contexts during training. But once formed, it becomes a compact structural guide for interpreting new contexts during inference. This is why the framework is useful for the present thesis: it explains how the project moved from individual examples toward reusable structural representations without treating those representations as something detached from the data from which they emerged.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  phase/.style={draw=mtunavy, rounded corners=4pt, minimum width=5.2cm,
+                minimum height=1.8cm, text centered, font=\small\sffamily, align=center},
+  lbl/.style={font=\footnotesize\sffamily, text=mtunavy},
+  arr/.style={->, >=Latex, ultra thick, color=mtunavy}
+]
+\node[phase, fill=mtunavy!12] (train) at (-3.2,0)
+  {\textbf{Training (open phase)}\\[4pt] Many contexts $\rightarrow$ stable pattern\\[2pt]
+   \footnotesize diverse examples carve\\internal structure};
+
+\node[phase, fill=mtuamber!30] (infer) at ( 3.2,0)
+  {\textbf{Inference (closed phase)}\\[4pt] Frozen pattern $\rightarrow$ new context\\[2pt]
+   \footnotesize structure imposed on\\unseen instances};
+
+\draw[arr] (train.east) -- node[above, lbl]{context \textbf{forms} pattern} (infer.west);
+\draw[arr, dashed] (infer.south) to[bend right=40]
+  node[below, lbl]{pattern \textbf{organises} context} (train.south);
+\end{tikzpicture}
+\caption{Context--pattern duality: training extracts stable patterns from many contexts; inference applies those frozen patterns to new unseen input.}
+\label{fig:cpduality}
+\end{figure}
+
 \section{Lexical Invariance}
 
 By lexical invariance, the present work means the following property: a pedagogically meaningful interpretation of a construction remains applicable even when the specific words in the sentence change. In other words, if two sentences differ in lexical content but are built according to the same grammatical or lexico-grammatical pattern, the system should, as far as possible, recognize the same structural basis in both and associate it with the same or a closely related pedagogical interpretation. In this sense, invariance here does not refer to the literal form of the text, but to the stability of structural meaning under changing verbal material.
@@ -584,6 +647,42 @@ It is in this narrower sense that the contribution of the work should be underst
 The scope statement in the previous section deliberately keeps the conclusion within the bounds of ELA and pedagogical generation. However, during the same research period a similar structural observation appeared in another project belonging to a completely different domain. This matters not because the second domain automatically proves the first, but because the convergence arises independently, with different data, a different task, and a different form of signal. In this way, the observation made in ELA gains not universal proof, but a stronger cross-domain support.
 
 In the companion weather forecasting project~[15], the model was likewise not trained directly on the raw stream of observations as such. Instead, the multi-year time series for temperature, pressure, and wind speed were first decomposed into more compact analytical segments. Each segment was described not by individual values, but by a behaviour type and its parameters: for temperature, six ODE-derived equation types were used, and for pressure and wind, three. Across six years of observations, this produced `10,055` segments with a mean duration of `5.3` hours. After that, a transformer was trained not on raw measurements, but on sequences of such analytical descriptors, predicting the next regime rather than individual point values. On a one-week evaluation period in February 2026, which included a sharp pressure drop of `22` hPa, the system achieved a pressure MAE of `0.89` hPa at the 12-hour horizon, which was `34\%` better than a naive persistence baseline.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar=4pt, bar width=18pt,
+  width=10.5cm, height=6.5cm,
+  ylabel={MAE (normalised to persistence\,=\,1.0)},
+  ylabel style={font=\small},
+  symbolic x coords={Pressure (hPa), Temperature (C), Wind Speed (kt)},
+  xtick=data,
+  xticklabel style={font=\small},
+  ymin=0, ymax=1.25,
+  ytick={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+  yticklabel style={font=\small},
+  legend style={at={(0.97,0.97)}, anchor=north east, font=\small},
+  nodes near coords,
+  nodes near coords style={font=\scriptsize, /pgf/number format/fixed, /pgf/number format/precision=2},
+  enlarge x limits=0.25,
+]
+\addplot[fill=mtunavy, draw=mtunavy!80!black] coordinates {
+  (Pressure (hPa),   0.66)
+  (Temperature (C),  0.97)
+  (Wind Speed (kt),  0.78)
+};
+\addplot[fill=mtuamber, draw=mtuamber!80!black] coordinates {
+  (Pressure (hPa),   1.00)
+  (Temperature (C),  1.00)
+  (Wind Speed (kt),  1.00)
+};
+\legend{ODE-segment model, Naive persistence}
+\end{axis}
+\end{tikzpicture}
+\caption{Normalised MAE for the ODE-segment forecasting model versus naive persistence across three variables (February 2026 evaluation). Values below 1.0 indicate improvement over baseline.}
+\label{fig:weathermae}
+\end{figure}
 
 The structural parallel with ELA is fundamental. In the language project, the sentence is decomposed into Recursive Linguistic Elements and then represented through abstract node attributes and their relations. In the weather project, the flow of observations is first compressed into sequences of more stable analytical regimes. In both cases, the model is trained not on the surface of the signal itself, but on more compact structural units extracted from that signal. And in both cases, the practical gain appears when these units and their sequences become the main object of learning.
 
@@ -802,6 +901,52 @@ At the same time, the book-derived branch of the work was also expanded. In addi
 
 The scale of this work is visible in the cumulative results of book-source processing. The file \texttt{processed\_books\_cumulative\_summary\_source\_first\_v6.json} records \texttt{11} book families, \texttt{15,791} raw pairs, \texttt{13,996} clean pairs, and \texttt{8,412} final rows after later row selection. The largest contributions came from \texttt{Oxford Dictionary} (\texttt{2,746} rows), \texttt{Cambridge Dictionary} (\texttt{2,222}), and \texttt{English Grammar Today} (\texttt{1,835}), but the set was not limited to them: it also included \texttt{Leech Glossary} (\texttt{496}), \texttt{GSWE} (\texttt{466}), \texttt{COBUILD 2017} (\texttt{186}), \texttt{English Grammar in Use} (\texttt{117}), \texttt{English for Everyone Practice} (\texttt{120}), \texttt{Collins COBUILD 2011} (\texttt{130}), \texttt{Oxford Handbook} (\texttt{85}), and \texttt{Azar Basic Grammar}. In other words, a large quantity of heterogeneous source material was genuinely processed during the work, and the bottleneck did not lie in the absence of input material.
 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  xbar, bar width=10pt,
+  width=10cm, height=7.5cm,
+  xlabel={Final rows},
+  xlabel style={font=\small},
+  xmin=0, xmax=3100,
+  ytick=data,
+  symbolic y coords={
+    Azar Basic Grammar,
+    Oxford Handbook,
+    Collins COBUILD 2011,
+    English for Everyone,
+    English Grammar in Use,
+    COBUILD 2017,
+    GSWE,
+    Leech Glossary,
+    English Grammar Today,
+    Cambridge Dictionary,
+    Oxford Dictionary},
+  yticklabel style={font=\scriptsize},
+  nodes near coords,
+  nodes near coords style={font=\scriptsize},
+  enlarge y limits=0.08,
+]
+\addplot[fill=mtunavy, draw=mtunavy!80!black] coordinates {
+  (75,   Azar Basic Grammar)
+  (85,   Oxford Handbook)
+  (130,  Collins COBUILD 2011)
+  (120,  English for Everyone)
+  (117,  English Grammar in Use)
+  (186,  COBUILD 2017)
+  (466,  GSWE)
+  (496,  Leech Glossary)
+  (1835, English Grammar Today)
+  (2222, Cambridge Dictionary)
+  (2746, Oxford Dictionary)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Final row counts per book source in the cumulative training corpus (v6 summary). Oxford Dictionary, Cambridge Dictionary, and English Grammar Today together account for over 80\% of the dataset.}
+\label{fig:datasetsources}
+\end{figure}
+
 However, this stage proved to be both the most labour-intensive and the least efficient part of the entire project. Despite the variety of corpus-based, dictionary-based, and book-derived sources, the final outcome was only about \texttt{160+} unique \texttt{notation -> sentence} pairs suitable for further controlled use. This does not mean that the listed sources lacked sufficient material for the project. On the contrary, the work showed that transforming rich instructional and reference material into a compact set of genuinely usable notation-sentence pairs required disproportionately large amounts of time and effort. At each stage, the process involved extraction, cleaning, filtering, alignment, templating, deduplication, and repeated row selection, while a substantial part of the source material had to be discarded as noisy, repetitive, overly lexicalised, or poorly transferable into a template-oriented format.
 
 For this reason, the present stage does not allow the thesis to demonstrate broad and convincing coverage of the note-generation space at the level that would be needed for strong general claims about the completeness of this subsystem. The diversity of sources should therefore be interpreted not as evidence of already achieved coverage, but as evidence of how expensive and slow the extraction of high-quality pedagogical signal from real linguistic and instructional material turned out to be.
@@ -905,6 +1050,37 @@ The canonical process for book-to-dataset-to-inference, documented explicitly on
 \textit{Inference path (steps 7--10).} When a new sentence arrives from a user, it passes through the same spaCy parser, producing a contract with the same schema as the training contracts. The T5 model, trained on templated targets, outputs a notation template with placeholders. Those placeholders are then filled from the very same contract that was the model's input---the contract serves double duty as both the generation context and the slot-value source. The filled template is the rendered pedagogical note, saved back into the contract tree under \texttt{linguistic\_notes}.
 
 This symmetry---the contract is the context at training time, and the same contract schema provides the slot values at inference time---is the technical foundation of controlled note generation. The model never sees raw unbounded text as a target and never invents structure; it only realises wording for a template derived from and constrained by the contract.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  tbox/.style={draw=mtunavy, rounded corners=3pt, fill=blue!5,
+               minimum width=7.2cm, minimum height=0.58cm,
+               text centered, font=\small\sffamily},
+  thead/.style={draw=mtunavy, rounded corners=3pt, fill=mtunavy!15,
+               minimum width=7.2cm, minimum height=0.58cm,
+               text centered, font=\small\bfseries\sffamily},
+  arr/.style={->, >=Latex, thick, color=mtunavy!65},
+  lbl/.style={font=\scriptsize\sffamily, color=mtunavy!80}
+]
+\node[thead]         (b1)  at (0, 0)    {Grammar book: notation + content pair};
+\node[tbox]          (b2)  at (0,-0.85) {Parse content with spaCy $\rightarrow$ RLE contract};
+\node[tbox]          (b3)  at (0,-1.70) {Analyse notation $\rightarrow$ placeholder template};
+\node[tbox]          (b4)  at (0,-2.55) {Constrain placeholders to contract attributes};
+\node[tbox]          (b5)  at (0,-3.40) {Training row: contract + template (with slots)};
+\node[thead]         (sep) at (0,-4.35) {--- inference time ---};
+\node[tbox]          (b6)  at (0,-5.20) {New user sentence $\rightarrow$ spaCy $\rightarrow$ contract};
+\node[tbox]          (b7)  at (0,-6.05) {T5: predict notation template from contract};
+\node[tbox]          (b8)  at (0,-6.90) {Fill template slots from contract fields};
+\node[tbox]          (b9)  at (0,-7.75) {Write rendered note into \texttt{linguistic\_notes}};
+
+\foreach \i/\j in {b1/b2, b2/b3, b3/b4, b4/b5, sep/b6, b6/b7, b7/b8, b8/b9}
+  \draw[arr] (\i.south) -- (\j.north);
+\draw[arr] (b5.south) -- node[right, lbl]{training complete} (sep.north);
+\end{tikzpicture}
+\caption{Closed pipeline from grammar-book source to inference-time note rendering. Steps 1--5 produce training data; steps 6--9 describe inference for a new sentence.}
+\label{fig:pipelineflow}
+\end{figure}
 
 \subsection*{Field Ownership}
 The architecture formalises ownership of every contract field across three layers, as fixed in the field ownership document dated 2026-03-04:
@@ -1074,6 +1250,40 @@ One of the clearest examples is the comparison between the tabular full-ladder p
 A similar role was played by the intermediate results in the note-generation branch. Early and intermediate \texttt{T5} runs showed that simply training a model on notation-like targets did not automatically produce useful pedagogical output. Several evaluation reports showed very weak exact match, in many cases simply \texttt{0.0}. This applied to part of the refresh runs, the template-id experiments, and several early \texttt{T5} note models. In other words, generation against a target that looked like an explanation was not, by itself, enough to solve the task or to produce a result strong enough for practical use.
 
 A direct conclusion followed from this in the work. The later architecture was chosen as narrower but more controllable: the structure of the sentence was fixed first in the \texttt{RLE contract}, then the level and the explanation type were determined separately, after that the system moved to a template, and only at the final stage did it produce the verbal formulation of the note. In other words, the weak results of the comparative and intermediate runs showed which solutions were not providing the required stability, and this is what led to the shift from more open-ended generative schemes to a more tightly constrained pipeline.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar=4pt, bar width=20pt,
+  width=10cm, height=6.5cm,
+  ylabel={Score},
+  ylabel style={font=\small},
+  symbolic x coords={Accuracy, Macro-F1},
+  xtick=data,
+  xticklabel style={font=\small},
+  ymin=0, ymax=1.15,
+  ytick={0, 0.2, 0.4, 0.6, 0.8, 1.0},
+  yticklabel style={font=\small},
+  legend style={at={(0.97,0.97)}, anchor=north east, font=\small},
+  nodes near coords,
+  nodes near coords style={font=\scriptsize, /pgf/number format/fixed, /pgf/number format/precision=4},
+  enlarge x limits=0.4,
+]
+\addplot[fill=mtunavy, draw=mtunavy!80!black] coordinates {
+  (Accuracy,  0.9849)
+  (Macro-F1,  0.8231)
+};
+\addplot[fill=red!40, draw=red!70!black] coordinates {
+  (Accuracy,  0.1612)
+  (Macro-F1,  0.0463)
+};
+\legend{Tabular (XGBoost) --- test set, DeBERTa --- CEFR-only run}
+\end{axis}
+\end{tikzpicture}
+\caption{Classifier comparison: tabular XGBoost (2026-03-05 test set) versus DeBERTa CEFR-only run. The DeBERTa branch collapsed predictions to a single class (\texttt{C1}), while the tabular path achieved a joint test accuracy of 0.9849.}
+\label{fig:classifiercmp}
+\end{figure}
 
 \section{What the Current Evidence Does Not Fully Support}
 At the same time, the current evidence still does not justify very strong claims about the completeness or final maturity of the system. The main reason is not the absence of working components, but the narrowness of the final working datasets on which the main later results were obtained, and the high cost of producing those datasets.
@@ -1320,6 +1530,34 @@ What the AI revolution makes possible is the \emph{automation of the grammar-lea
 once a domain can be expressed as a sequence of interpretable analytical units, a
 transformer can extract the sequential regularities from historical data at a scale no human
 analyst could match.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  step/.style={draw=mtunavy, rounded corners=5pt, minimum width=3.6cm,
+               minimum height=2.0cm, text centered, align=center, font=\small\sffamily},
+  arr/.style={->, >=Latex, ultra thick, color=mtunavy!70},
+  sub/.style={font=\scriptsize\sffamily, color=mtunavy!75, align=center}
+]
+\node[step, fill=mtunavy!15] (d) at (0,0)
+  {\textbf{1. Decompose}\\[4pt]\scriptsize identify minimal\\analytical unit};
+
+\node[step, fill=mtunavy!25] (c) at (4.5,0)
+  {\textbf{2. Classify \&}\\[-1pt]\textbf{Sequence}\\[4pt]\scriptsize build unit vocabulary\\study transitions};
+
+\node[step, fill=mtunavy!35, text=white] (l) at (9.0,0)
+  {\textbf{3. Learn the}\\[-1pt]\textbf{Grammar}\\[4pt]\scriptsize train sequence model\\predict next regime};
+
+\draw[arr] (d.east) -- (c.west);
+\draw[arr] (c.east) -- (l.west);
+
+\node[sub] at (0,-1.55)   {ELA: RLE node\\Weather: ODE segment};
+\node[sub] at (4.5,-1.55) {ELA: TAM + role\\Weather: eq.\ type + params};
+\node[sub] at (9.0,-1.55) {ELA: pedagogical note\\Weather: forecast regime};
+\end{tikzpicture}
+\caption{The pattern-sequence three-step method: decompose the domain signal into analytical units, classify and observe their sequential grammar, then train a sequence model to predict the next unit. Domain-specific instantiations are shown below each step.}
+\label{fig:threestep}
+\end{figure}
 
 This positions the three-step method---decompose, classify, learn the grammar---
 as a candidate general framework for data-driven scientific understanding, distinct from
